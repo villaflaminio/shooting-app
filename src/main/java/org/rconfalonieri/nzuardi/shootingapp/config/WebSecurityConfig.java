@@ -3,12 +3,12 @@ package org.rconfalonieri.nzuardi.shootingapp.config;
 
 import org.rconfalonieri.nzuardi.shootingapp.exception.JwtAccessDeniedHandler;
 import org.rconfalonieri.nzuardi.shootingapp.exception.JwtAuthenticationEntryPoint;
-import org.rconfalonieri.nzuardi.shootingapp.security.helper.CustomAuthenticationProvider;
+//import org.rconfalonieri.nzuardi.shootingapp.security.CustomAuthenticationProvider;
 import org.rconfalonieri.nzuardi.shootingapp.security.jwt.JWTConfigurer;
 import org.rconfalonieri.nzuardi.shootingapp.security.jwt.TokenProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -27,6 +27,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final CorsFilter corsFilter;
     private final JwtAuthenticationEntryPoint authenticationErrorHandler;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+//    @Autowired
+//    private CustomAuthenticationProvider authProvider;
 
     public WebSecurityConfig(
             TokenProvider tokenProvider,
@@ -42,6 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     // Configure BCrypt password encoder =====================================================================
 
+
     @Bean
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -49,6 +52,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     // Configure paths and requests that should be ignored by Spring Security ================================
 
+
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.authenticationProvider(authProvider);
+//    }
     @Override
     public void configure(WebSecurity web) {
 

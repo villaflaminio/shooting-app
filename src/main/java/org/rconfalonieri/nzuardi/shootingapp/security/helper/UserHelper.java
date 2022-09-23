@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -36,13 +37,14 @@ import static org.rconfalonieri.nzuardi.shootingapp.exception.UserException.user
 @Component
 public class UserHelper {
     private final TokenProvider tokenProvider;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     @Autowired
     UserRepository userRepository;
     @Autowired
     AuthorityRepository authorityRepository;
     @Autowired
     private PasswordEncoder bcryptEncoder;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
 
     public UserHelper(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
         this.tokenProvider = tokenProvider;
@@ -50,6 +52,7 @@ public class UserHelper {
     }
 
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginDTO loginDto) {
+        User user = userRepository.findActiveTesserinoid(loginDto.idTesserino).orElseThrow(() -> new UserException(IDTESSERINO_NOT_EXIST));
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.idTesserino, loginDto.password);
@@ -66,7 +69,6 @@ public class UserHelper {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-        User user = userRepository.findActiveTesserinoid(loginDto.idTesserino).orElseThrow(() -> new UserException(IDTESSERINO_NOT_EXIST));
         return new ResponseEntity<>(new JWTToken(jwt, user, authorities), httpHeaders, HttpStatus.OK);
     }
 
