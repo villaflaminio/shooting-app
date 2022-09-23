@@ -20,10 +20,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByActualTesserinoId(String tesserinoId);
     //    @Formula("(select t.id from tesserino t where t.utente_id = ID and t.data_rilascio = (select max(t2.data_rilascio) from tesserino t2 ))")
 
+    @Query("select u from User u where u.actualTesserinoId = ?1")
 
 
     Optional<User> findByActualTesserinoId(String tesserinoId);
 
     boolean existsByEmail(String email);
 
+    Optional<User> findByEmail(String userEmail);
 }

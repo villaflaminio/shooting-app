@@ -10,8 +10,10 @@ import org.rconfalonieri.nzuardi.shootingapp.model.User;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginDTO;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.UserDTO;
 import org.rconfalonieri.nzuardi.shootingapp.repository.AuthorityRepository;
+import org.rconfalonieri.nzuardi.shootingapp.repository.PasswordResetTokenRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.TesserinoRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
+import org.rconfalonieri.nzuardi.shootingapp.security.CustomUserDetailsService;
 import org.rconfalonieri.nzuardi.shootingapp.security.jwt.JWTFilter;
 import org.rconfalonieri.nzuardi.shootingapp.security.jwt.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +55,11 @@ public class UserHelper {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
+    @Autowired
     TesserinoRepository tesserinoRepository;
-
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
     public UserHelper(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
         this.tokenProvider = tokenProvider;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
@@ -114,7 +119,7 @@ public class UserHelper {
 
     private User register(UserDTO userDTO)  {
         ceckUser(userDTO);
-        if (!userRepository.existsByEmail(userDTO.email) && role(userDTO).isEmpty()) {
+        if (userRepository.existsByEmail(userDTO.email) || role(userDTO).isEmpty()) {
             throw new UserException(USER_ALREADY_EXISTS);
         }
         User utente = User.builder()
@@ -133,13 +138,6 @@ public class UserHelper {
                 .stream();
         ByteArrayInputStream bis = new ByteArrayInputStream(stream.toByteArray());
 
-        try {
-            BufferedImage img = ImageIO.read(bis);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-
         Tesserino tesserino = new Tesserino().builder()
                 .dataRilascio(dataRilascio)
                 .utente(utente)
@@ -148,6 +146,7 @@ public class UserHelper {
                 .build();
         userRepository.save(utente);
         tesserinoRepository.save(tesserino);
+        customUserDetailsService.requestResetPassword(utente);
 
         Optional<User> user = userRepository.findById(utente.getId());
         if (user.isPresent()) {
