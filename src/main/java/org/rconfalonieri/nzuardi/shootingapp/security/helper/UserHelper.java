@@ -109,7 +109,7 @@ public class UserHelper {
                     .password(bcryptEncoder.encode(userDTO.password))
                     .nome(userDTO.nome)
                     .cognome(userDTO.cognome)
-                    .activated(true)
+                    .sospeso(false)
                     .authorities(role(userDTO))
                     .build());
         }

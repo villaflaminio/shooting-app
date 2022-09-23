@@ -39,6 +39,8 @@ public class UserController {
     @CrossOrigin(origins = "*")
     @PostMapping("/authenticate")
     public ResponseEntity<UserHelper.JWTToken> authorize(@Valid @RequestBody LoginDTO loginDto) {
+       User u =  userRepository.findById(1l).get();
+
         return userHelper.authorize(loginDto);
     }
 

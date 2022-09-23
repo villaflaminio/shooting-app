@@ -3,10 +3,12 @@ package org.rconfalonieri.nzuardi.shootingapp.config;
 
 import org.rconfalonieri.nzuardi.shootingapp.exception.JwtAccessDeniedHandler;
 import org.rconfalonieri.nzuardi.shootingapp.exception.JwtAuthenticationEntryPoint;
+import org.rconfalonieri.nzuardi.shootingapp.security.helper.CustomAuthenticationProvider;
 import org.rconfalonieri.nzuardi.shootingapp.security.jwt.JWTConfigurer;
 import org.rconfalonieri.nzuardi.shootingapp.security.jwt.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;

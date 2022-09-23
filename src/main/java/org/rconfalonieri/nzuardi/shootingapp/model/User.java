@@ -3,6 +3,7 @@ package org.rconfalonieri.nzuardi.shootingapp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -28,10 +29,12 @@ public class User {
     @SequenceGenerator(name = "USER_SEQ", sequenceName = "USER_SEQ", allocationSize = 1)
     private Long id;
 
-    @Column(name = "email", length = 50, unique = true)
-    @NotNull
-    @Size(min = 4, max = 50)
-    private String email;
+//    @Column(name = "email", length = 50, unique = true)
+//    @NotNull
+//    @Size(min = 4, max = 50)
+
+//    @Formula("(select t.id from tesserino t where t.utente_id = ID and t.data_rilascio = (select max(t2.data_rilascio) from tesserino t2 ))")
+//    private String email;
 
     @JsonIgnore
     @Column(name = "password", length = 100)
@@ -50,9 +53,20 @@ public class User {
     private String cognome;
 
     @JsonIgnore
-    @Column(name = "activated")
+    @Column(name = "sospeso")
     @NotNull
-    private Boolean activated;
+    private boolean sospeso;
+
+    @OneToMany(mappedBy = "utente")
+    private List<Tesserino> tesserini;
+
+    @OneToMany(mappedBy = "utentePren")
+    private List<Prenotazione> prenotazioni;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "valutazione_id", referencedColumnName = "id")
+    private Valutazione valutazione;
+
 
     @ManyToMany
     @JoinTable(
