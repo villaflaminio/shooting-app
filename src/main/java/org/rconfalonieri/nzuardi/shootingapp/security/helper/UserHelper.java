@@ -52,7 +52,7 @@ public class UserHelper {
     }
 
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginDTO loginDto) {
-        User user = userRepository.findActiveTesserinoid(loginDto.idTesserino).orElseThrow(() -> new UserException(IDTESSERINO_NOT_EXIST));
+        User user = userRepository.findByActualTesserinoId(loginDto.idTesserino).orElseThrow(() -> new UserException(IDTESSERINO_NOT_EXIST));
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.idTesserino, loginDto.password);

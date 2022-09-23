@@ -20,8 +20,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByActualTesserinoId(String tesserinoId);
     //    @Formula("(select t.id from tesserino t where t.utente_id = ID and t.data_rilascio = (select max(t2.data_rilascio) from tesserino t2 ))")
 
-    @Query(value = "select t.utente from Tesserino t where t.utente.id = :id and t.dataRilascio = (select max(t2.dataRilascio) from Tesserino t2 )")
-    Optional<User> findActiveTesserinoid(String id);
 
+
+    Optional<User> findByActualTesserinoId(String tesserinoId);
 
 }
