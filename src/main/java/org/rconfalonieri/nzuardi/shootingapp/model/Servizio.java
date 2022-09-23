@@ -34,7 +34,8 @@ public class Servizio {
     @NotNull
     private Float prezzo;
 
-    // TODO private Blob foto;
+    @Lob
+    private String foto;
 
     @Column(name="quantita")
     @NotNull

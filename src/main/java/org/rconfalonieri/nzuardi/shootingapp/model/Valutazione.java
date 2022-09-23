@@ -25,7 +25,8 @@ public class Valutazione {
     @OneToOne(mappedBy = "valutazione")
     private Utente utenteValutato;
 
-    @OneToOne(mappedBy = "valutazione")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "istruttore_id", referencedColumnName = "id")
     private Istruttore utenteValutante;
 
     @Column(name="voto")

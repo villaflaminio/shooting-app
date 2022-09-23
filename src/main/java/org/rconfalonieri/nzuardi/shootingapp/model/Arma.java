@@ -27,7 +27,9 @@ public class Arma {
     @Size(min = 1, max = 50)
     private String nome;
 
-    // TODO private Blob foto;
+    @Lob
+    private String foto;
+
 
     @JsonIgnore
     @Column(name = "disponibile")

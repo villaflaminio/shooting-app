@@ -54,14 +54,8 @@ public class Utente {
     @OneToMany(mappedBy = "utentePren")
     private List<Prenotazione> prenotazioni;
 
-    @OneToOne(mappedBy = "utenteValutato")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "valutazione_id", referencedColumnName = "id")
     private Valutazione valutazione;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_authority",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "nome_authority", referencedColumnName = "nome")})
-    @BatchSize(size = 20)
-    private Set<Authority> authorities = new HashSet<>();
 }

@@ -18,8 +18,8 @@ public class Istruttore {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-
-    @OneToOne(mappedBy = "istruttore", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "prenotazione_id", referencedColumnName = "id")
     private Prenotazione prenotazione;
 
     @OneToOne(mappedBy = "utenteValutante")
