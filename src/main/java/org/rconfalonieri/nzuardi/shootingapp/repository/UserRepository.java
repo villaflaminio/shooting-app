@@ -24,4 +24,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByActualTesserinoId(String tesserinoId);
 
+    boolean existsByEmail(String email);
+
 }

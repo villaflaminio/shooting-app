@@ -6,6 +6,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
@@ -32,6 +33,11 @@ public class User {
    @Formula("(select t.id from tesserino t where t.utente_id = ID and t.data_rilascio = (select max(t2.data_rilascio) from tesserino t2 ))")
     private String actualTesserinoId;
 
+   @Column(name = "email", length = 100)
+    @NotNull
+    @Size(min = 4, max = 100)
+   @Email
+   private String email;
     @JsonIgnore
     @Column(name = "password", length = 100)
     @NotNull

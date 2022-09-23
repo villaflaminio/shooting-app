@@ -74,6 +74,10 @@ public class TokenProvider implements InitializingBean {
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
+                .setIssuedAt(new Date())
+                .setHeaderParam("typ", "JWT")
+                .setAudience("secure-app")
+
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(validity)
                 .compact();

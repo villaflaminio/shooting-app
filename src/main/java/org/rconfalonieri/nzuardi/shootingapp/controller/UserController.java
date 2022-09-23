@@ -19,7 +19,7 @@ import java.util.Optional;
 import static org.rconfalonieri.nzuardi.shootingapp.exception.UserException.userExceptionCode.USER_NOT_LOGGED_IN;
 
 @RestController
-@RequestMapping("/api/auth/")
+@RequestMapping("/api/user/")
 @Tag(name = "Utente")
 public class UserController {
     @Autowired
@@ -29,37 +29,10 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    /**
-     * Dati per il login nel seguente formato
-     * {
-     * "email" : "mariorossi@gmail.com",
-     * "password" : "mario"
-     * }
-     */
-    @CrossOrigin(origins = "*")
-    @PostMapping("/login")
-    public ResponseEntity<UserHelper.JWTToken> authorize(@Valid @RequestBody LoginDTO loginDto) {
-       User u =  userRepository.findById(1l).get();
 
-        return userHelper.authorize(loginDto);
-    }
 
-    /**
-     * Dati per register nel seguente formato
-     * {
-     * "email" : "mariorossi@gmail.com",
-     * "password" : "ciao1234",
-     * "firstName" : "mario",
-     * "lastName" : "rossi",
-     * "region" : 3
-     * }
-     */
-    @PostMapping("/register/user")
-    public User registerUser(@Valid @RequestBody UserDTO userDTO) {
-        return userHelper.registerUser(userDTO);
-    }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<User> getUtente(@PathVariable("id") Long id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {

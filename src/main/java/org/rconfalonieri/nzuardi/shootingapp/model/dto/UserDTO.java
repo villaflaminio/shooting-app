@@ -10,6 +10,7 @@ public class UserDTO {
 
     public Long id;
     public String password;
+    public String email;
     public String role;
     public String nome;
     public String cognome;

@@ -2,12 +2,15 @@ package org.rconfalonieri.nzuardi.shootingapp.security.helper;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
+import net.glxn.qrgen.javase.QRCode;
 import org.rconfalonieri.nzuardi.shootingapp.exception.UserException;
 import org.rconfalonieri.nzuardi.shootingapp.model.Authority;
+import org.rconfalonieri.nzuardi.shootingapp.model.Tesserino;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginDTO;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.UserDTO;
 import org.rconfalonieri.nzuardi.shootingapp.repository.AuthorityRepository;
+import org.rconfalonieri.nzuardi.shootingapp.repository.TesserinoRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
 import org.rconfalonieri.nzuardi.shootingapp.security.jwt.JWTFilter;
 import org.rconfalonieri.nzuardi.shootingapp.security.jwt.TokenProvider;
@@ -25,10 +28,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.imageio.ImageIO;
 import javax.validation.Valid;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.time.Year;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.rconfalonieri.nzuardi.shootingapp.exception.UserException.userExceptionCode.*;
@@ -45,6 +52,8 @@ public class UserHelper {
     private PasswordEncoder bcryptEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
+    @Autowired
+    TesserinoRepository tesserinoRepository;
 
     public UserHelper(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
         this.tokenProvider = tokenProvider;
@@ -61,7 +70,7 @@ public class UserHelper {
         //SecurityContextHolder è una classe di supporto, che forniscono l'accesso al contesto di protezione
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        boolean rememberMe = (loginDto.rememberMe == null) ? false : loginDto.isRememberMe();
+        boolean rememberMe = loginDto.rememberMe != null && loginDto.isRememberMe();
         String jwt = tokenProvider.createToken(authentication, rememberMe);
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -103,19 +112,50 @@ public class UserHelper {
         return register(userDTO);
     }
 
-    private User register(UserDTO userDTO) {
-        //TODO
-//        ceckUser(userDTO);
-//        if (!userRepository.existsByEmail(userDTO.email) && !role(userDTO).isEmpty()) {
-//            return userRepository.save(User.builder()
-//                    .password(bcryptEncoder.encode(userDTO.password))
-//                    .nome(userDTO.nome)
-//                    .cognome(userDTO.cognome)
-//                    .sospeso(false)
-//                    .authorities(role(userDTO))
-//                    .build());
-//        }
-        throw new UserException(USER_ALREADY_EXISTS);
+    private User register(UserDTO userDTO)  {
+        ceckUser(userDTO);
+        if (!userRepository.existsByEmail(userDTO.email) && role(userDTO).isEmpty()) {
+            throw new UserException(USER_ALREADY_EXISTS);
+        }
+        User utente = User.builder()
+                .password(bcryptEncoder.encode(userDTO.password))
+                .nome(userDTO.nome)
+                .email(userDTO.email)
+                .cognome(userDTO.cognome)
+                .sospeso(false)
+                .authorities(role(userDTO))
+                .build();
+
+        Date dataRilascio = new Date();
+        ByteArrayOutputStream stream = QRCode
+                .from("Tesserino id: " + utente.getId() + " Nome: " + utente.getNome() + " Cognome: " + utente.getCognome())
+                .withSize(250, 250)
+                .stream();
+        ByteArrayInputStream bis = new ByteArrayInputStream(stream.toByteArray());
+
+        try {
+            BufferedImage img = ImageIO.read(bis);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        Tesserino tesserino = new Tesserino().builder()
+                .dataRilascio(dataRilascio)
+                .utente(utente)
+                .dataScadenza(new Date(dataRilascio.getTime() + (1000L * 60 * 60 * 24 * 365)))
+                .qrCode("data:image/png;base64," + Base64.getEncoder().encodeToString(stream.toByteArray()))
+                .build();
+        userRepository.save(utente);
+        tesserinoRepository.save(tesserino);
+
+        Optional<User> user = userRepository.findById(utente.getId());
+        if (user.isPresent()) {
+
+            return user.get();
+        }
+        return null;
+
     }
 
     private Set<Authority> role(UserDTO userDTO) {
