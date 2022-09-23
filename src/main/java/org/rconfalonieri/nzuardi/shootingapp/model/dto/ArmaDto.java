@@ -20,7 +20,7 @@ public class ArmaDto implements Serializable {
     private String nome;
     private String foto;
     @NotNull
-    private boolean disponibile;
+    private Boolean disponibile;
     @NotNull
     @Size(min = 1, max = 50)
     private String seriale;

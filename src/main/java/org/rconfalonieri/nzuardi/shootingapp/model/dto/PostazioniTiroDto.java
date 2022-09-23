@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class PostazioniTiroDto implements Serializable {
     private Long id;
     @NotNull
-    private boolean sagoma;
+    private Boolean sagoma;
     @NotNull
     private Integer distanza;
 }

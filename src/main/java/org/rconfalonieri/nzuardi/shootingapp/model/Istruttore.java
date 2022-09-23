@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "istruttore")
@@ -18,6 +20,17 @@ public class Istruttore {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+
+    @Column(name = "nome", length = 50)
+    @NotNull
+    @Size(min = 1, max = 50)
+    private String nome;
+
+    @Column(name = "cognome", length = 50)
+    @NotNull
+    @Size(min = 1, max = 50)
+    private String cognome;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "prenotazione_id", referencedColumnName = "id")
     private Prenotazione prenotazione;

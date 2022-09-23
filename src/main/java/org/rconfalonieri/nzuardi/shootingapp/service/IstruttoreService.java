@@ -61,23 +61,15 @@ public class IstruttoreService {
      */
     public Istruttore save(IstruttoreDto istruttoreDto) {
         try {
-            // Controllo se l'utente esiste
-            Optional<Istruttore> user = istruttoreRepository.findById(istruttoreDto.getId());
+            Istruttore istruttore = new Istruttore();
 
-            if (user.isPresent()){
-                log.error("Istruttore con seriale già esistente");
-                throw new Exception("Istruttore con seriale già esistente");
-            }else{
-                Istruttore istruttore = new Istruttore();
+            // Copio i dati
+            BeanUtils.copyProperties(istruttoreDto, istruttore);
 
-                // Copio i dati
-                BeanUtils.copyProperties(istruttoreDto, istruttore);
+            istruttore.setId(null);
 
-                istruttore.setId(null);
-
-                // Salvo l'istruttore
-                return istruttoreRepository.save(istruttore);
-            }
+            // Salvo l'istruttore
+            return istruttoreRepository.save(istruttore);
         } catch (Exception e) {
             log.error("errore salvataggio istruttore", e);
             throw new RuntimeException(e);

@@ -30,8 +30,6 @@ public class Arma {
     @Lob
     private String foto;
 
-
-    @JsonIgnore
     @Column(name = "disponibile")
     @NotNull
     private boolean disponibile;

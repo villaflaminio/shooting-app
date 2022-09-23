@@ -18,7 +18,7 @@ import java.util.Optional;
  * Controller per la gestione delle postazioni di tiro.
  * Permette di eseguire tutte le operazioni CRUD sulle postazioni di tiro.
  */
-@RequestMapping("/api/postazioneTiro")
+@RequestMapping("/api/postazioniTiro")
 @RestController
 @Tag(name = "PostazioniTiro")
 public class PostazioniTiroController {
