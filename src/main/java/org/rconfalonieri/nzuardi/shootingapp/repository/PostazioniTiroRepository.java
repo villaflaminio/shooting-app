@@ -1,0 +1,10 @@
+package org.rconfalonieri.nzuardi.shootingapp.repository;
+
+import org.rconfalonieri.nzuardi.shootingapp.model.PostazioniTiro;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface PostazioniTiroRepository extends JpaRepository<PostazioniTiro, Long> {
+    PostazioniTiro findPostazioniTiroById(Long id);
+}
