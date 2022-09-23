@@ -17,7 +17,6 @@ import java.util.Date;
 @NoArgsConstructor
 public class Tesserino {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -35,6 +34,6 @@ public class Tesserino {
 
     @ManyToOne
     @JoinColumn(name = "utente_id")
-    private Utente utente;
+    private User utente;
 
 }

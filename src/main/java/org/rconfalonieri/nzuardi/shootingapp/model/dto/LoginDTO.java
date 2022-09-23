@@ -10,7 +10,7 @@ public class LoginDTO {
 
     @NotNull
     @Size(min = 1, max = 50)
-    public String email;
+    public String idTesserino;
 
     @NotNull
     @Size(min = 4, max = 100)

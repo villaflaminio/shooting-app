@@ -19,7 +19,7 @@ import java.util.Optional;
 import static org.rconfalonieri.nzuardi.shootingapp.exception.UserException.userExceptionCode.USER_NOT_LOGGED_IN;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth/")
 @Tag(name = "Utente")
 public class UserController {
     @Autowired
@@ -37,8 +37,10 @@ public class UserController {
      * }
      */
     @CrossOrigin(origins = "*")
-    @PostMapping("/authenticate")
+    @PostMapping("/login")
     public ResponseEntity<UserHelper.JWTToken> authorize(@Valid @RequestBody LoginDTO loginDto) {
+       User u =  userRepository.findById(1l).get();
+
         return userHelper.authorize(loginDto);
     }
 

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -29,20 +30,21 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import static org.rconfalonieri.nzuardi.shootingapp.exception.UserException.userExceptionCode.AUTHORITY_NOT_EXIST;
-import static org.rconfalonieri.nzuardi.shootingapp.exception.UserException.userExceptionCode.USER_ALREADY_EXISTS;
+
+import static org.rconfalonieri.nzuardi.shootingapp.exception.UserException.userExceptionCode.*;
 
 
 @Component
 public class UserHelper {
     private final TokenProvider tokenProvider;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     @Autowired
     UserRepository userRepository;
     @Autowired
     AuthorityRepository authorityRepository;
     @Autowired
     private PasswordEncoder bcryptEncoder;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
 
     public UserHelper(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
         this.tokenProvider = tokenProvider;
@@ -50,9 +52,10 @@ public class UserHelper {
     }
 
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginDTO loginDto) {
+        User user = userRepository.findByActualTesserinoId(loginDto.idTesserino).orElseThrow(() -> new UserException(IDTESSERINO_NOT_EXIST));
 
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginDto.email, loginDto.password);
+                new UsernamePasswordAuthenticationToken(loginDto.idTesserino, loginDto.password);
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         //SecurityContextHolder è una classe di supporto, che forniscono l'accesso al contesto di protezione
@@ -66,11 +69,10 @@ public class UserHelper {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-        return new ResponseEntity<>(new JWTToken(jwt, userRepository.findByEmail(loginDto.email), authorities), httpHeaders, HttpStatus.OK);
+        return new ResponseEntity<>(new JWTToken(jwt, user, authorities), httpHeaders, HttpStatus.OK);
     }
 
     public void ceckUser(UserDTO userDTO) {
-        Preconditions.checkArgument(Objects.nonNull(userDTO.email));
         Preconditions.checkArgument(Objects.nonNull(userDTO.password));
         Preconditions.checkArgument(Objects.nonNull(userDTO.role));
         Preconditions.checkArgument(Objects.nonNull(userDTO.nome));
@@ -102,17 +104,17 @@ public class UserHelper {
     }
 
     private User register(UserDTO userDTO) {
-        ceckUser(userDTO);
-        if (!userRepository.existsByEmail(userDTO.email) && !role(userDTO).isEmpty()) {
-            return userRepository.save(User.builder()
-                    .email(userDTO.email)
-                    .password(bcryptEncoder.encode(userDTO.password))
-                    .nome(userDTO.nome)
-                    .cognome(userDTO.cognome)
-                    .activated(true)
-                    .authorities(role(userDTO))
-                    .build());
-        }
+        //TODO
+//        ceckUser(userDTO);
+//        if (!userRepository.existsByEmail(userDTO.email) && !role(userDTO).isEmpty()) {
+//            return userRepository.save(User.builder()
+//                    .password(bcryptEncoder.encode(userDTO.password))
+//                    .nome(userDTO.nome)
+//                    .cognome(userDTO.cognome)
+//                    .sospeso(false)
+//                    .authorities(role(userDTO))
+//                    .build());
+//        }
         throw new UserException(USER_ALREADY_EXISTS);
     }
 

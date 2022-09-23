@@ -32,7 +32,7 @@ public class Prenotazione {
 
     @ManyToOne
     @JoinColumn(name="utente_id", nullable=false)
-    private Utente utentePren;
+    private User utentePren;
 
     @OneToMany(mappedBy = "prenotazione")
     private List<Servizio> extra;
