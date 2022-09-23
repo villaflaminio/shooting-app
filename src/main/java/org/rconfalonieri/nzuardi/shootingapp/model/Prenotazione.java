@@ -7,26 +7,29 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.List;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "banchina")
+@Table(name = "prenotazione")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Banchina {
+public class Prenotazione {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "nome", length = 50)
+    @Column(name = "data_inizio", nullable = false)
     @NotNull
-    @Size(min = 1, max = 50)
-    private String nome;
+    private LocalDate dataInizio;
 
-    @OneToMany(mappedBy = "banchina")
-    private List<PostazioniTiro> postazioniDiTiro;
+    @Column(name = "data_fine", nullable = false)
+    @NotNull
+    private LocalDate dataFine;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "utente_id", referencedColumnName = "id")
+    private Utente utente;
 }
