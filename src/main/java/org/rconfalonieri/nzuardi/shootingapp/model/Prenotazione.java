@@ -7,7 +7,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "prenotazione")
@@ -23,13 +24,24 @@ public class Prenotazione {
 
     @Column(name = "data_inizio", nullable = false)
     @NotNull
-    private LocalDate dataInizio;
+    private Date dataInizio;
 
     @Column(name = "data_fine", nullable = false)
     @NotNull
-    private LocalDate dataFine;
+    private Date dataFine;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "utente_id", referencedColumnName = "id")
-    private Utente utente;
+    @ManyToOne
+    @JoinColumn(name="utente_id", nullable=false)
+    private Utente utentePren;
+
+    @OneToMany(mappedBy = "prenotazione")
+    private List<Servizio> extra;
+
+    @OneToOne(mappedBy = "prenotazione")
+    private Istruttore istruttore;
+
+    @OneToMany(mappedBy = "prenotazione")
+    private List<Arma> armi;
+
+
 }

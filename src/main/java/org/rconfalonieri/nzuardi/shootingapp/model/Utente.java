@@ -11,7 +11,6 @@ import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,8 +51,12 @@ public class Utente {
     @OneToMany(mappedBy = "utente")
     private List<Tesserino> tesserini;
 
-    @OneToMany(mappedBy = "prenotazione")
+    @OneToMany(mappedBy = "utentePren")
     private List<Prenotazione> prenotazioni;
+
+    @OneToOne(mappedBy = "utenteValutato")
+    private Valutazione valutazione;
+
     @ManyToMany
     @JoinTable(
             name = "user_authority",

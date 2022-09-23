@@ -6,35 +6,33 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 
 @Entity
-@Table(name = "tesserino")
+@Table(name = "valutazione")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Tesserino {
+public class Valutazione {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "data_scadenza")
-    @NotNull
-    private Date dataScadenza;
+    @OneToOne(mappedBy = "valutazione")
+    private Utente utenteValutato;
 
-    @Column(name = "data_rilascio")
-    @NotNull
-    private Date dataRilascio;
+    @OneToOne(mappedBy = "valutazione")
+    private Istruttore utenteValutante;
 
-    @Column(name = "qr_code")
+    @Column(name="voto")
     @NotNull
-    private String qrCode;
+    @Min(1)
+    @Max(5)
+    private Integer voto;
 
-    @ManyToOne
-    @JoinColumn(name = "utente_id")
-    private Utente utente;
 
 }
