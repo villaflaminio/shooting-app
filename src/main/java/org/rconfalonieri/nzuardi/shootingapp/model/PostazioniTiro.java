@@ -24,9 +24,9 @@ public class PostazioniTiro {
     @NotNull
     private boolean sagoma;
 
-    @ManyToOne
-    @JoinColumn(name = "banchina_id")
-    private Banchina banchina;
+//    @ManyToOne
+//    @JoinColumn(name = "banchina_id")
+//    private Banchina banchina;
 
     @Column(name = "distanza", nullable = false)
     @NotNull

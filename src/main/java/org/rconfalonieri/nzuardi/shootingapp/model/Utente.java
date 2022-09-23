@@ -48,17 +48,11 @@ public class Utente {
     @Column(name = "sospeso")
     @NotNull
     private boolean sospeso;
+//
+//    @OneToMany(mappedBy = "utente")
+//    private List<Tesserino> tesserini;
+//
+//    @OneToMany(mappedBy = "prenotazione")
+//    private List<Prenotazione> prenotazioni;
 
-    @OneToMany(mappedBy = "utente")
-    private List<Tesserino> tesserini;
-
-    @OneToMany(mappedBy = "prenotazione")
-    private List<Prenotazione> prenotazioni;
-    @ManyToMany
-    @JoinTable(
-            name = "user_authority",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "nome_authority", referencedColumnName = "nome")})
-    @BatchSize(size = 20)
-    private Set<Authority> authorities = new HashSet<>();
 }
