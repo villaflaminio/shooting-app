@@ -4,10 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class represents the user principal.
@@ -38,8 +35,7 @@ public class UserPrincipal implements  UserDetails {
      * @param user the user to create
      */
     public static UserPrincipal create(User user, String username) {
-        List<GrantedAuthority> authorities = user.;
-
+        List<GrantedAuthority> authorities = getAuthorities(user);
         return new UserPrincipal(
                 user.getId(),
                 username,
@@ -47,7 +43,14 @@ public class UserPrincipal implements  UserDetails {
                 authorities
         );
     }
+    public static List<GrantedAuthority> getAuthorities(User authority) {
 
+        List<GrantedAuthority> list = new ArrayList<GrantedAuthority>();
+        for (Authority singleAuthority: authority.getAuthorities()) {
+            list.add(new SimpleGrantedAuthority(singleAuthority.getName()));
+        }
+        return list;
+    }
     /**
      * Instantiates a new User principal.
      * @param user the user to create

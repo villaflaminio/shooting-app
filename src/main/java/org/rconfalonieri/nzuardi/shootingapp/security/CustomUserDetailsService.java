@@ -33,7 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     /**
      * Load user by email.
-     * @param email The username.
+     * @param username The username.
      * @return The user details.
      * @throws UsernameNotFoundException
      */

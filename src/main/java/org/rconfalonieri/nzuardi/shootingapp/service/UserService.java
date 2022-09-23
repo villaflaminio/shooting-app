@@ -23,7 +23,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Optional<User> getUserWithAuthorities() {
-        return SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByEmail);
+        return SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByActualTesserinoId);
     }
 
     public ResponseEntity<?> getAll() {

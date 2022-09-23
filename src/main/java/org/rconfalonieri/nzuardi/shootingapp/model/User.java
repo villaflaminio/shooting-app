@@ -29,12 +29,8 @@ public class User {
     @SequenceGenerator(name = "USER_SEQ", sequenceName = "USER_SEQ", allocationSize = 1)
     private Long id;
 
-//    @Column(name = "email", length = 50, unique = true)
-//    @NotNull
-//    @Size(min = 4, max = 50)
-
-//    @Formula("(select t.id from tesserino t where t.utente_id = ID and t.data_rilascio = (select max(t2.data_rilascio) from tesserino t2 ))")
-//    private String email;
+   @Formula("(select t.id from tesserino t where t.utente_id = ID and t.data_rilascio = (select max(t2.data_rilascio) from tesserino t2 ))")
+    private String actualTesserinoId;
 
     @JsonIgnore
     @Column(name = "password", length = 100)

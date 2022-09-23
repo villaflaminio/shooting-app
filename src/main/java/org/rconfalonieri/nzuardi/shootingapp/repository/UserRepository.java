@@ -15,14 +15,9 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @EntityGraph(attributePaths = "authorities")
-    Optional<User> findOneWithAuthoritiesByEmail(String email);
+    Optional<User> findOneWithAuthoritiesByActualTesserinoId(String tesserinoId);
 
-    @EntityGraph(attributePaths = "authorities")
-    Optional<User> findOneWithAuthoritiesByEmailIgnoreCase(String email);
-
-    User findByEmail(String username);
-
-    Boolean existsByEmail(String username);
+    Boolean existsByActualTesserinoId(String tesserinoId);
     //    @Formula("(select t.id from tesserino t where t.utente_id = ID and t.data_rilascio = (select max(t2.data_rilascio) from tesserino t2 ))")
 
     @Query(value = "select t.utente from Tesserino t where t.utente = :id and t.dataRilascio = (select max(t2.dataRilascio) from Tesserino t2 )")

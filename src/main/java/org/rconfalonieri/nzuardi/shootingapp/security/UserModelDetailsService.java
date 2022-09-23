@@ -38,13 +38,13 @@ public class UserModelDetailsService implements UserDetailsService {
         log.debug("Authenticating user '{}'", login);
 
         if (new EmailValidator().isValid(login, null)) {
-            return userRepository.findOneWithAuthoritiesByEmailIgnoreCase(login)
+            return userRepository.findOneWithAuthoritiesByActualTesserinoId(login)
                     .map(user -> createSpringSecurityUser(login, user))
                     .orElseThrow(() -> new UsernameNotFoundException("User with email " + login + " was not found in the database"));
         }
 
         String lowercaseLogin = login.toLowerCase(Locale.ENGLISH);
-        return userRepository.findOneWithAuthoritiesByEmail(lowercaseLogin)
+        return userRepository.findOneWithAuthoritiesByActualTesserinoId(lowercaseLogin)
                 .map(user -> createSpringSecurityUser(lowercaseLogin, user))
                 .orElseThrow(() -> new UsernameNotFoundException("User " + lowercaseLogin + " was not found in the database"));
 
@@ -55,7 +55,8 @@ public class UserModelDetailsService implements UserDetailsService {
         List<GrantedAuthority> grantedAuthorities = user.getAuthorities().stream()
                 .map(authority -> new SimpleGrantedAuthority(authority.getName()))
                 .collect(Collectors.toList());
-        return new org.springframework.security.core.userdetails.User(user.getEmail(),
+
+        return new org.springframework.security.core.userdetails.User(user.getActualTesserinoId(),
                 user.getPassword(),
                 grantedAuthorities);
     }

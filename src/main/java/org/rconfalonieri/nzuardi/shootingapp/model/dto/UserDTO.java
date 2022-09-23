@@ -9,7 +9,6 @@ import org.rconfalonieri.nzuardi.shootingapp.model.User;
 public class UserDTO {
 
     public Long id;
-    public String email;
     public String password;
     public String role;
     public String nome;
@@ -18,13 +17,11 @@ public class UserDTO {
 
     public UserDTO(User user) {
         this.id = user.getId();
-        this.email = user.getEmail();
         this.nome = user.getNome();
         this.cognome = user.getCognome();
     }
 
-    public UserDTO(String email, String password, String role, String nome, String cognome) {
-        this.email = email;
+    public UserDTO( String password, String role, String nome, String cognome) {
         this.password = password;
         this.role = role;
         this.nome = nome;
