@@ -42,6 +42,8 @@ public class AuthController {
 
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepository;
+
+    //TODO gestire login per admin ed istruttori con email e password
     @CrossOrigin(origins = "*")
     @PostMapping("/login")
     public ResponseEntity<UserHelper.JWTToken> login(@Valid @RequestBody LoginDTO loginDto) {
@@ -58,17 +60,23 @@ public class AuthController {
      * "region" : 3
      * }
      */
-    @PostMapping("/register/user")
+    @PostMapping("/register/user") //TODO funzione disponibile sono per gli admin
     public User registerUser(@Valid @RequestBody UserDTO userDTO) {
         return userHelper.registerUser(userDTO);
     }
+
+
+    //TODO register admin , solo altri admin possono farlo
+
+    //TODO register istruttore , sono gli admin
+
 
     /**
      * Reset the password of the user.
      * @param userEmail the email of the user to reset the password
      * @return the response
      */
-    @PostMapping("/recoveryPassword")
+    @PostMapping("/recoveryPassword") //TODO: sistemare invio email
     public ResponseEntity<?> recoveryPassword(@RequestParam("email") String userEmail) {
         // Find the user with the given email.
         User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new BadRequestException("User not found with email : " + userEmail));
@@ -77,12 +85,15 @@ public class AuthController {
         return ResponseEntity.ok(customUserDetailsService.requestResetPassword(user));
     }
 
+
+    //TODO: api per inviare email di configurazione password (dopo la registrazione da parte dell'admin)
+
     /**
      * Retrieve the authentication of the user with the given token to request a change of password.
      * @param token the request to reset the password
      * @return the response
      */
-    @GetMapping("/tokenResetPassword")
+    @GetMapping("/tokenResetPassword") //TODO Da finire
     public ResponseEntity<?> getAuthenticationToChangePassword(@RequestParam("token") String token) {
         // Find the password reset token using the given token.
         Optional<PasswordResetToken> userPasswToken = passwordResetTokenRepository.findByToken(token);
@@ -98,4 +109,6 @@ public class AuthController {
         // Request the token to change the password.
         return customUserDetailsService.requestTokenRecoveryPassword(token , user);
     }
+
+    //TODO: metodo recupero password
 }

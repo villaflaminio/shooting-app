@@ -30,11 +30,14 @@ public class Prenotazione {
     @NotNull
     private Date dataFine;
 
+    private boolean abilitata;
+
+    private boolean confermata;
     @ManyToOne
     @JoinColumn(name="utente_id", nullable=false)
     private User utentePren;
 
-    @OneToMany(mappedBy = "prenotazione")
+    @OneToMany(mappedBy = "prenotazione") //todo prenotazione - servizi many to many
     private List<Servizio> extra;
 
     @OneToOne(mappedBy = "prenotazione")

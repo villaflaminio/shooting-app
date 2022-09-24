@@ -98,4 +98,8 @@ public class PostazioniTiroController {
             @RequestParam(required = false, name = "sortDirection") String sortDirection) {
         return postazioniTiroService.filter(probe, page, size, sortField, sortDirection);
     }
+
+    //todo api per disattivare la postazione di tiro
+
+
 }

@@ -32,4 +32,5 @@ public class PostazioniTiro {
     @NotNull
     private Integer distanza;
 
+    private boolean attiva;
 }

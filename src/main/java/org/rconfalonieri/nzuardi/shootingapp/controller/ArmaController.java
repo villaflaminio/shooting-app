@@ -98,4 +98,9 @@ public class ArmaController {
             @RequestParam(required = false, name = "sortDirection") String sortDirection) {
         return armaService.filter(probe, page, size, sortField, sortDirection);
     }
+
+    //todo disabilita arma dato il seriale
+    //todo abilita arma dato il seriale
+
+
 }

@@ -42,35 +42,10 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    /**
-     * Dati per register nel seguente formato
-     * {
-     * "email" : "mariorossi@gmail.com",
-     * "password" : "mario",
-     * "firstName" : "mario",
-     * "lastName" : "rossi",
-     * <p>
-     * }
-     */
-    @PostMapping("/register/admin")
-    public User registerAdmin(@Valid @RequestBody UserDTO userDTO) {
-        setUser(userDTO);
-
-        return userHelper.registerAdmin(userDTO);
-    }
-
-    private void setUser(UserDTO userDTO) {
-        Optional<User> userLogged = userService.getUserWithAuthorities();
-        if (userLogged.isPresent())
-            //userDTO.callUser = userLogged.get();
-            return;
-        else
-            throw new UserException(USER_NOT_LOGGED_IN);
-    }
 
     // =================================================================================================================
 
-    @GetMapping("/actualUser")
+    @GetMapping("/actualUser") //TODO: controllare se funziona
     public ResponseEntity<User> getActualUser() {
         return ResponseEntity.ok(userService.getUserWithAuthorities().get());
     }
@@ -80,14 +55,14 @@ public class UserController {
     }
 
     /**
-     * @param probe         Dto contenente i dati della palestra da filtrare.
+     * @param probe         Dto contenente i dati degli utenti da filtrare.
      * @param page          Pagina da visualizzare
      * @param size          Numero di elementi per pagina
      * @param sortField     Campo per ordinamento
      * @param sortDirection Direzione di ordinamento
      * @return La pagina di risultati della ricerca.
      */
-    @Operation(summary = "filter", description = "Filtra le palestre")
+    @Operation(summary = "filter", description = "Filtra gli utenti")
     @PostMapping("user/filter")
     ResponseEntity<Page<User>> filter(
             @RequestBody(required = false) User probe,
@@ -97,4 +72,15 @@ public class UserController {
             @RequestParam(required = false, name = "sortDirection") String sortDirection) {
         return userService.filter(probe, page, size, sortField, sortDirection);
     }
+
+    //TODO disattivazione utenti
+
+    //todo prendere tutte le prenotazioni passate di un utente
+
+    //todo mostrare i vecchi tesserini di un utente
+
+    //todo conferma prenotazione, se bisogna pagare dei servizi extra gestire e far pagare in struttura
+
+    //todo dare un nuovo feedback all'istruttore di una prenotazione
+
 }

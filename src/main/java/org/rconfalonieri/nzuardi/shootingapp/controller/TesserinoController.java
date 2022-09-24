@@ -88,7 +88,7 @@ public class TesserinoController {
      * @param sortDirection Direzione di ordinamento.
      * @return Lista di tesserini filtrati.
      */
-    @Operation(summary = "filter", description = "Filtra gli abbonamenti")
+    @Operation(summary = "filter", description = "Filtra i tesserini")
     @PostMapping("/filter")
     ResponseEntity<Page<Tesserino>> filter(
             @RequestBody(required = false) Tesserino probe,

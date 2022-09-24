@@ -98,4 +98,9 @@ public class BanchinaController {
             @RequestParam(required = false, name = "sortDirection") String sortDirection) {
         return banchinaService.filter(probe, page, size, sortField, sortDirection);
     }
+
+    //todo api per mostrare le altre prenotazioni del giorno ,per mostrare a l'utente quando e' libera
+
+
+
 }

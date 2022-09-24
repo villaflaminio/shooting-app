@@ -65,6 +65,7 @@ public class UserHelper {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
     }
 
+    //TODO login con email per admin e istruttori
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginDTO loginDto) {
         User user = userRepository.findByActualTesserinoId(loginDto.idTesserino).orElseThrow(() -> new UserException(IDTESSERINO_NOT_EXIST));
 

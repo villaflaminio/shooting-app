@@ -60,7 +60,7 @@ public class PrenotazioneController {
      * @param id Identificativo del prenotazione da eliminare.
      */
     @Operation(summary = "delete", description = "Elimina un prenotazione")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") //todo la delete della prenotazione deve essere solo logica
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         Optional.ofNullable(prenotazioneService.findById(id)).orElseThrow(() -> {
             return new ResourceNotFoundException();
@@ -98,4 +98,11 @@ public class PrenotazioneController {
             @RequestParam(required = false, name = "sortDirection") String sortDirection) {
         return prenotazioneService.filter(probe, page, size, sortField, sortDirection);
     }
+
+    //todo gestire abilitazione della prenotazione da parte della segreteria se bisogna pagare dei servizi extra abilitazione manuale
+    //todo dopo il pagamento , altrimenti abilitazione dopo la conferma dell' utente
+
+    //todo la prenotazione deve essere abilitata solo se e' stata confermata e tutti i servizi extra sono stati pagati
+
+    //todo disabilita prenotazione
 }

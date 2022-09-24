@@ -88,7 +88,7 @@ public class ServizioController {
      * @param sortDirection Direzione di ordinamento.
      * @return Lista di servizi filtrati.
      */
-    @Operation(summary = "filter", description = "Filtra gli abbonamenti")
+    @Operation(summary = "filter", description = "Filtra i servizi")
     @PostMapping("/filter")
     ResponseEntity<Page<Servizio>> filter(
             @RequestBody(required = false) Servizio probe,
@@ -98,4 +98,10 @@ public class ServizioController {
             @RequestParam(required = false, name = "sortDirection") String sortDirection) {
         return servizioService.filter(probe, page, size, sortField, sortDirection);
     }
+
+    //todo diminnuzione del numero di unita' disponibili per un servizio
+
+    //todo aumento del numero di unita' disponibili per un servizio
+
+
 }

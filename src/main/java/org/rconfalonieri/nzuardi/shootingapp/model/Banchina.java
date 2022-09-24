@@ -29,4 +29,7 @@ public class Banchina {
 
     @OneToMany(mappedBy = "banchina")
     private List<PostazioniTiro> postazioniDiTiro;
+
+    private boolean attiva;
+
 }
