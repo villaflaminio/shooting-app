@@ -3,9 +3,6 @@ package org.rconfalonieri.nzuardi.shootingapp.model.dto;
 
 import lombok.*;
 
-/**
- * This class represents the response of the email.
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

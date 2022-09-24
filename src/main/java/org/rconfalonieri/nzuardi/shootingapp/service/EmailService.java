@@ -3,16 +3,20 @@ package org.rconfalonieri.nzuardi.shootingapp.service;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.MailResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import javax.activation.URLDataSource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -25,14 +29,12 @@ public class EmailService {
     @Autowired
     private Configuration freeMarkerConfiguration;
 
-
     @Value("${mail.username}")
     private String username;
 
-//todo mail per recupero password
+    //todo mail per recupero password
 
     // Methods that sends an email using Freemarker specified template.
-
     public MailResponse sendEmail(String to, String subject, Map<String, Object> model, String ftlFileName) {
         MailResponse response = new MailResponse();
         MimeMessage message = javaMailSender.createMimeMessage();
@@ -41,20 +43,24 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
                     StandardCharsets.UTF_8.name());
 
-            //todo no path statici
-            //todo nella mail di set password mandare anche il tesserino, anche con render del qr code (sarebbe carino)
             // Get the correct template into resources/mail-templates
-            Template t = freeMarkerConfiguration.getTemplate("C:\\my_space\\shooting-app\\src\\main\\resources\\mail-templates\\setPassword.ftl");
+            Template t = freeMarkerConfiguration.getTemplate(ftlFileName + ".ftl");
             String html = FreeMarkerTemplateUtils.processTemplateIntoString(t, model);
             helper.setTo(to);
 
             // Set up the email
             helper.setText(html, true);
             helper.setSubject(subject);
+            helper.setFrom("Shooting App Customer Service <" + username + ">");
+            helper.addInline("logo.png", new ClassPathResource("mail-templates/images/3275432.png"));
+            helper.addInline("facebook.png", new ClassPathResource("mail-templates/images/facebook2x.png"));
+            helper.addInline("instagram.png", new ClassPathResource("mail-templates/images/instagram2x.png"));
+            helper.addInline("twitter.png", new ClassPathResource("mail-templates/images/twitter2x.png"));
+            helper.addInline("logo-background.png", new ClassPathResource("mail-templates/images/logo-no-background.png"));
 
-            //helper.setCc(cc); per mandare in cc
-
-            helper.setFrom(username);
+//            String qrCode = "iVBORw0KGgoAAAANSUhEUgAAAV4AAAFeAQMAAAD35eVZAAAABlBMVEUAAAD///+l2Z/dAAAAAWJLR0QB/wIt3gAAAeFJREFUaN7t2juSgzAQBNB2ERDqCByFo4mjcRQdgVABRW8wM9hrez8J0m5VK6LgOZqSNGoZ/P3YISwsLCwsLPw38AYbE+tAIq9IFQC5+ocs3B6PJMl12kYeQGbBuN9IrhNJUrgL3gHkdbJS5hWpDke8uQl3xawAuGAivYLC3bHPLxaMJH8qt/C1ONY6DAdIFtjD9wuj8KU4uoJt3G9WOH/4roUQvhSfY4O3asDA5yHcFPtsWpG43wgA8IkGjDsg3AGTO6Jttq4gShnHHOFe2HsAxwe4zLTmjcLtsb8piSR9J7LTDSDcCZO+74wkgflTSnO86QqEL8e+snkUg7xOJA8Ac0l25BRujkke4AIAwwFgvtfV55dwc2yhJeYSuKQKM3H2FG6PfbtJ58pWo5RVuA8+P0WkbMd/LoD1CVm4Od7iquX+cB7/X7sC4SbYUv1lLql6DoBIkuOOTLg13iLV9/mFiSQ9nHnp64Sb4HP4r1gQhXvb1wk3wA85v2E+BP58biGE2+C4EWONoMywV1C4C44L/diJgIH3wP+L23/hJjjCmbOmb3cr4aaY3GHxvudjXsos3AFbvexPYlyAVGH3lYlfbkDC1+KzKwAAZJZUBxKYrWcT7oB/N4SFhYWFhYX/Gf4AT8YBIH5wdHUAAAAASUVORK5CYII=";
+//            byte[] qrCodeBytes = javax.xml.bind.DatatypeConverter.parseBase64Binary(qrCode);
+//            helper.addInline("qr-code.png", qrCodeBytes);
             javaMailSender.send(message);
 
             response.setMessage(ftlFileName + " | Mail sent to : " + to);

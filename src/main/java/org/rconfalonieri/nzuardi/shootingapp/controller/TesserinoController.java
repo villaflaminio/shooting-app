@@ -62,9 +62,7 @@ public class TesserinoController {
     @Operation(summary = "delete", description = "Elimina un tesserino")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        Optional.ofNullable(tesserinoService.findById(id)).orElseThrow(() -> {
-            return new ResourceNotFoundException();
-        });
+        Optional.ofNullable(tesserinoService.findById(id)).orElseThrow(ResourceNotFoundException::new);
         tesserinoService.deleteById(id);
         return ResponseEntity.ok().build();
     }
