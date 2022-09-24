@@ -76,13 +76,13 @@ public class AuthController {
      * @param userEmail the email of the user to reset the password
      * @return the response
      */
-    @PostMapping("/recoveryPassword") //TODO: sistemare invio email
-    public ResponseEntity<?> recoveryPassword(@RequestParam("email") String userEmail) {
+    @PostMapping("/sendMailRecoveryPassword") //TODO: sistemare invio email
+    public ResponseEntity<?> sendMailRecoveryPassword(@RequestParam("email") String userEmail) {
         // Find the user with the given email.
         User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new BadRequestException("User not found with email : " + userEmail));
 
         // Return the response (200 - OK) and call the method to send the email to recover password.
-        return ResponseEntity.ok(customUserDetailsService.requestResetPassword(user));
+        return ResponseEntity.ok(customUserDetailsService.sendMailRecoveryPassword(user));
     }
 
 
@@ -93,8 +93,8 @@ public class AuthController {
      * @param token the request to reset the password
      * @return the response
      */
-    @GetMapping("/tokenResetPassword") //TODO Da finire
-    public ResponseEntity<?> getAuthenticationToChangePassword(@RequestParam("token") String token) {
+    @GetMapping("/getAuthenticationFromEmail") //TODO Da finire
+    public ResponseEntity<?> getAuthenticationFromEmail(@RequestParam("token") String token) {
         // Find the password reset token using the given token.
         Optional<PasswordResetToken> userPasswToken = passwordResetTokenRepository.findByToken(token);
 

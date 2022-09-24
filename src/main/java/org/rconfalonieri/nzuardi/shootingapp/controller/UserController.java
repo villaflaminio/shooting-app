@@ -1,16 +1,20 @@
 package org.rconfalonieri.nzuardi.shootingapp.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.rconfalonieri.nzuardi.shootingapp.exception.ResourceNotFoundException;
 import org.rconfalonieri.nzuardi.shootingapp.exception.UserException;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
+import org.rconfalonieri.nzuardi.shootingapp.model.UserPrincipal;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginDTO;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.UserDTO;
+import org.rconfalonieri.nzuardi.shootingapp.repository.CurrentUser;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
 import org.rconfalonieri.nzuardi.shootingapp.security.helper.UserHelper;
 import org.rconfalonieri.nzuardi.shootingapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,7 +33,8 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     @GetMapping("/{id}")
@@ -43,8 +48,27 @@ public class UserController {
     }
 
 
-    // =================================================================================================================
+    /**
+     * Update the user password
+     * @param userPrincipal the current user
+     * @param newPassword the new password
+     * @return the updated user
+     */
+    @PostMapping("/changePassword")
+    public User changePassword(@CurrentUser UserPrincipal userPrincipal , @RequestBody String newPassword ){
+        // Find the current user by id.
+        User user = userRepository.findById(userPrincipal.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
 
+        // Update the password.
+        user.setPassword(newPassword);
+
+        // Encode the new password.
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Save the user.
+        return userRepository.save(user);
+    }
     @GetMapping("/actualUser") //TODO: controllare se funziona
     public ResponseEntity<User> getActualUser() {
         return ResponseEntity.ok(userService.getUserWithAuthorities().get());

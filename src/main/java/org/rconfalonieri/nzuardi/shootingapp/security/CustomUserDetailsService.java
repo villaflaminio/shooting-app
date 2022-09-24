@@ -64,7 +64,26 @@ public class CustomUserDetailsService implements UserDetailsService {
      * @param user The user that is requesting the reset.
      * @return The mail response.
      */
-    public MailResponse requestResetPassword(User user) {
+    public MailResponse sendMailPostRegistrazione(User user) {
+        // Create a new token to reset the password.
+        String token = UUID.randomUUID().toString();
+        PasswordResetToken passwordResetToken = new PasswordResetToken();
+        passwordResetToken.setToken(token);
+        passwordResetToken.setUser(user);
+        passwordResetToken.setExpiryDate(Instant.now().plusSeconds(Long.parseLong(Objects.requireNonNull(env.getProperty("app.auth.refreshTokenExpiration")))));
+
+        // Save the password reset token
+        passwordResetTokenRepository.save(passwordResetToken);
+
+        // Send the email
+        Map<String, Object> model = new HashMap<>();
+        model.put("name", user.getNome());
+        model.put("indirizzo", "http://localhost:8080/" + "user/setPassword?token=" + token );
+        return emailService.sendEmail(user.getEmail(),"Set new password",model,"src/main/resources/mail-templates/setPassword");
+    }
+
+
+    public MailResponse sendMailRecoveryPassword(User user) {
         // Create a new token to reset the password.
         String token = UUID.randomUUID().toString();
         PasswordResetToken passwordResetToken = new PasswordResetToken();
