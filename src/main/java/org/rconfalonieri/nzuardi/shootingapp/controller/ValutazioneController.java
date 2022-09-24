@@ -23,6 +23,7 @@ import java.util.Optional;
 @Tag(name = "Valutazione")
 public class ValutazioneController {
 
+
     @Autowired
     ValutazioneService valutazioneService;
 
@@ -51,24 +52,25 @@ public class ValutazioneController {
      * @param valutazioneDto Dto contenente i dati del valutazione da inserire.
      * @return valutazione inserito.
      */
-    @Operation(summary = "save", description = "Crea un nuovo valutazione")
+    @Operation(summary = "save", description = "Crea un nuovo valutazione") //todo gestire logiche di chi puo' creare una nuova valutazione
     @PostMapping
     public ResponseEntity<Valutazione> save(@RequestBody @Validated ValutazioneDto valutazioneDto) {
         return ResponseEntity.ok(valutazioneService.save(valutazioneDto));
     }
 
-    /**
-     * @param id Identificativo del valutazione da eliminare.
-     */
-    @Operation(summary = "delete", description = "Elimina un valutazione")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        Optional.ofNullable(valutazioneService.findById(id)).orElseThrow(() -> {
-            return new ResourceNotFoundException();
-        });
-        valutazioneService.deleteById(id);
-        return ResponseEntity.ok().build();
-    }
+    //todo e' mai necessario elimiare una valutazione? non credo, da valutare
+//    /**
+//     * @param id Identificativo del valutazione da eliminare.
+//     */
+//    @Operation(summary = "delete", description = "Elimina un valutazione")
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+//        Optional.ofNullable(valutazioneService.findById(id)).orElseThrow(() -> {
+//            return new ResourceNotFoundException();
+//        });
+//        valutazioneService.deleteById(id);
+//        return ResponseEntity.ok().build();
+//    }
 
     /**
      * @param valutazioneDto Dto contenente i dati del valutazione da aggiornare.

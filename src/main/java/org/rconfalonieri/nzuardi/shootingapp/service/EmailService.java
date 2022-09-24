@@ -29,10 +29,10 @@ public class EmailService {
     @Value("${mail.username}")
     private String username;
 
+//todo mail per recupero password
 
     // Methods that sends an email using Freemarker specified template.
 
-    // -------------------[sendOnBoardingToolstaffingEmail]----------------------
     public MailResponse sendEmail(String to, String subject, Map<String, Object> model, String ftlFileName) {
         MailResponse response = new MailResponse();
         MimeMessage message = javaMailSender.createMimeMessage();
@@ -41,6 +41,8 @@ public class EmailService {
             MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
                     StandardCharsets.UTF_8.name());
 
+            //todo no path statici
+            //todo nella mail di set password mandare anche il tesserino, anche con render del qr code (sarebbe carino)
             // Get the correct template into resources/mail-templates
             Template t = freeMarkerConfiguration.getTemplate("C:\\my_space\\shooting-app\\src\\main\\resources\\mail-templates\\setPassword.ftl");
             String html = FreeMarkerTemplateUtils.processTemplateIntoString(t, model);

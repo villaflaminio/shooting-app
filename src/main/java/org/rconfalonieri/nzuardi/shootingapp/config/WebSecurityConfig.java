@@ -103,6 +103,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
+                //todo aggiungere tutti i permessi per le varie rotte
                 .antMatchers("/api/register/user").permitAll()
                 .antMatchers("/api/register/admin").permitAll()
                 .antMatchers("/category/*").permitAll()

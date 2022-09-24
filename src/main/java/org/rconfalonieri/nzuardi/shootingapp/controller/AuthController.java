@@ -68,7 +68,7 @@ public class AuthController {
 
     //TODO register admin , solo altri admin possono farlo
 
-    //TODO register istruttore , sono gli admin
+    //TODO register istruttore , solo gli admin
 
 
     /**
