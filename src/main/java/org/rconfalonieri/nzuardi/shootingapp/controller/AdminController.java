@@ -1,13 +1,8 @@
 package org.rconfalonieri.nzuardi.shootingapp.controller;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.rconfalonieri.nzuardi.shootingapp.exception.ResourceNotFoundException;
-import org.rconfalonieri.nzuardi.shootingapp.exception.UserException;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
-//import org.rconfalonieri.nzuardi.shootingapp.model.UserPrincipal;
-import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginDTO;
-import org.rconfalonieri.nzuardi.shootingapp.model.dto.UserDTO;
-import org.rconfalonieri.nzuardi.shootingapp.repository.CurrentUser;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
 import org.rconfalonieri.nzuardi.shootingapp.security.helper.UserHelper;
 import org.rconfalonieri.nzuardi.shootingapp.service.UserService;
@@ -17,15 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.Optional;
 
-import static org.rconfalonieri.nzuardi.shootingapp.exception.UserException.userExceptionCode.USER_NOT_LOGGED_IN;
-
 @RestController
-@RequestMapping("/api/user/")
-@Tag(name = "Utente")
-public class UserController {
+@RequestMapping("/api/admin/")
+@Tag(name = "Admin")
+public class AdminController {
     @Autowired
     private UserHelper userHelper;
     @Autowired
@@ -38,13 +30,9 @@ public class UserController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUtente(@PathVariable("id") Long id) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isPresent()) {
-
-            return ResponseEntity.ok(user.get());
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<?> getUtente(@PathVariable("id") Long id) {
+     User u = userRepository.findById(id).get();
+      return ResponseEntity.ok("ok");
     }
 
 

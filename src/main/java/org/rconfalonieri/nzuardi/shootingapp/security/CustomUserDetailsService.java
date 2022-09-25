@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.rconfalonieri.nzuardi.shootingapp.exception.BadRequestException;
 import org.rconfalonieri.nzuardi.shootingapp.model.PasswordResetToken;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
+//import org.rconfalonieri.nzuardi.shootingapp.model.UserPrincipal;
 import org.rconfalonieri.nzuardi.shootingapp.model.UserPrincipal;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.ApiResponseDto;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.MailResponse;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -49,16 +53,23 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String email)
+    public UserDetails loadUserByUsername(String tesserinoId)
             throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found with email : " + email)
-        );
 
-        return UserPrincipal.create(user,user.getActualTesserinoId());
+        return userRepository.findByActualTesserinoId(tesserinoId)
+                .map(this::createSpringSecurityUser)
+                .orElseThrow(() -> new UsernameNotFoundException("User " + " was not found in the database"));
     }
 
+    private org.springframework.security.core.userdetails.User createSpringSecurityUser(User user) {
+
+        List<GrantedAuthority> grantedAuthorities = user.getAuthorities().stream()
+                .map(authority -> new SimpleGrantedAuthority(authority.getName()))
+                .collect(Collectors.toList());
+        return new org.springframework.security.core.userdetails.User(user.getEmail(),
+                user.getPassword(),
+                grantedAuthorities);
+    }
     /**
      * Request a password reset.
      * @param user The user that is requesting the reset.
@@ -150,17 +161,5 @@ public class CustomUserDetailsService implements UserDetailsService {
 //        }
     }
 
-    /**
-     * Load user by id.
-     * @param id The id of the user.
-     * @return The UserDetails.
-     */
-    @Transactional
-    public UserDetails loadUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(
-            () -> new ResourceNotFoundException("User")
-        );
 
-        return UserPrincipal.create(user, user.getActualTesserinoId());
-    }
 }

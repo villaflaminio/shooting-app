@@ -46,7 +46,7 @@ public class AuthController {
     //TODO gestire login per admin ed istruttori con email e password
     @CrossOrigin(origins = "*")
     @PostMapping("/login")
-    public ResponseEntity<UserHelper.JWTToken> login(@Valid @RequestBody LoginDTO loginDto) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDto) {
         return userHelper.authorize(loginDto);
     }
 

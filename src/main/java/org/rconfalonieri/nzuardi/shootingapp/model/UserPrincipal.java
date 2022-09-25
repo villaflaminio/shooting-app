@@ -5,6 +5,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class represents the user principal.
@@ -34,37 +35,28 @@ public class UserPrincipal implements  UserDetails {
      * Instantiates a new User principal.
      * @param user the user to create
      */
-    public static UserPrincipal create(User user, String username) {
-        List<GrantedAuthority> authorities = getAuthorities(user);
+    public static UserPrincipal create(User user) {
+
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for (Authority authority : user.getAuthorities()) {
+            authorities.add(new SimpleGrantedAuthority(authority.getName()));
+        }
+
         return new UserPrincipal(
                 user.getId(),
-                username,
+                user.getEmail(),
                 user.getPassword(),
                 authorities
         );
     }
-    public static List<GrantedAuthority> getAuthorities(User authority) {
 
-        List<GrantedAuthority> list = new ArrayList<GrantedAuthority>();
-        for (Authority singleAuthority: authority.getAuthorities()) {
-            list.add(new SimpleGrantedAuthority(singleAuthority.getName()));
-        }
-        return list;
-    }
-    /**
-     * Instantiates a new User principal.
-     * @param user the user to create
-     * @param attributes the attributes to set
-     * @return the user principal
-     */
-    public static UserPrincipal create(User user, String username, Map<String, Object> attributes) {
-        UserPrincipal userPrincipal = UserPrincipal.create(user, username);
-        userPrincipal.setAttributes(attributes);
-        return userPrincipal;
-    }
 
     public Long getId() {
         return id;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     @Override
@@ -102,8 +94,8 @@ public class UserPrincipal implements  UserDetails {
         return authorities;
     }
 
+
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
     }
-
 }

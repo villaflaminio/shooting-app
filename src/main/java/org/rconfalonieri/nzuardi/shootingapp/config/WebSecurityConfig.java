@@ -104,32 +104,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 //todo aggiungere tutti i permessi per le varie rotte
-                .antMatchers("/api/register/user").permitAll()
-                .antMatchers("/api/register/admin").permitAll()
-                .antMatchers("/category/*").permitAll()
-                .antMatchers("/news/*").permitAll()
-                .antMatchers("/news/*/*").permitAll()
-                .antMatchers("/place/*").permitAll()
-                .antMatchers("/referralPerson/*").permitAll()
-                .antMatchers("/secretary/*").permitAll()
-                .antMatchers("/structure/*").permitAll()
-                .antMatchers("/structure/*/*").permitAll()
-                .antMatchers("/settingsdesctiption/*").permitAll()
-                .antMatchers("/location/*").permitAll()
-                .antMatchers("/test/*").permitAll()
 
+                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/api/user/**").hasAuthority("ROLE_USER")
 
-                .antMatchers("/api/category/*").hasAuthority("ROLE_SECRETARY")
-                .antMatchers("/api/news/*").hasAuthority("ROLE_SECRETARY")
-                .antMatchers("/api/referralPerson/*").hasAuthority("ROLE_SECRETARY")
-                .antMatchers("/api/secretary/*").hasAuthority("ROLE_SECRETARY")
-                .antMatchers("/api/structure/*").hasAuthority("ROLE_SECRETARY")
-
-                .antMatchers("/api/testUser").hasAuthority("ROLE_USER")
-                .antMatchers("/api/testSecretary").hasAuthority("ROLE_SECRETARY")
-                .antMatchers("/api/testAdminSecretary").hasAuthority("ROLE_ADMIN_SECRETARY")
-                .antMatchers("/api/testAdmin").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/**").permitAll()
 
                 .anyRequest().authenticated()
 

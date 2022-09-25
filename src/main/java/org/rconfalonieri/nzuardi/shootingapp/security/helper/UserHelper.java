@@ -7,6 +7,7 @@ import org.rconfalonieri.nzuardi.shootingapp.exception.UserException;
 import org.rconfalonieri.nzuardi.shootingapp.model.Authority;
 import org.rconfalonieri.nzuardi.shootingapp.model.Tesserino;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
+import org.rconfalonieri.nzuardi.shootingapp.model.dto.AuthResponseDto;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginDTO;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.UserDTO;
 import org.rconfalonieri.nzuardi.shootingapp.repository.AuthorityRepository;
@@ -66,25 +67,22 @@ public class UserHelper {
     }
 
     //TODO login con email per admin e istruttori
-    public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginDTO loginDto) {
+    public ResponseEntity<?> authorize(@Valid @RequestBody LoginDTO loginDto) {
         User user = userRepository.findByActualTesserinoId(loginDto.idTesserino).orElseThrow(() -> new UserException(IDTESSERINO_NOT_EXIST));
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.idTesserino, loginDto.password);
 
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
         //SecurityContextHolder è una classe di supporto, che forniscono l'accesso al contesto di protezione
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         boolean rememberMe = loginDto.rememberMe != null && loginDto.isRememberMe();
-        String jwt = tokenProvider.createToken(authentication, rememberMe);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-        return new ResponseEntity<>(new JWTToken(jwt, user, authorities), httpHeaders, HttpStatus.OK);
+
+
+        return tokenProvider.createToken(authentication,user, rememberMe);
     }
 
     public void ceckUser(UserDTO userDTO) {
@@ -148,7 +146,7 @@ public class UserHelper {
         userRepository.save(utente);
         tesserinoRepository.save(tesserino);
 
-        customUserDetailsService.sendMailPostRegistrazione(utente);
+      //  customUserDetailsService.sendMailPostRegistrazione(utente); //todo riabilitare dopo modifica credenziali gmail
 
         Optional<User> user = userRepository.findById(utente.getId());
         if (user.isPresent()) {

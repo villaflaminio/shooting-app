@@ -4,15 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Formula;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @Getter
@@ -30,7 +28,7 @@ public class User {
     @SequenceGenerator(name = "USER_SEQ", sequenceName = "USER_SEQ", allocationSize = 1)
     private Long id;
 
-   @Formula("(select t.id from tesserino t where t.utente_id = ID and t.data_rilascio = (select max(t2.data_rilascio) from tesserino t2 ))")
+   @Formula("(select t.id from tesserino t where t.utente_id = ID and t.data_rilascio = (select max(t2.data_rilascio) from tesserino t2 where t2.utente_id = ID))")
     private String actualTesserinoId;
 
    @Column(name = "email", length = 100)
@@ -68,7 +66,6 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "valutazione_id", referencedColumnName = "id")
     private Valutazione valutazione;
-
 
     @ManyToMany
     @JoinTable(
