@@ -13,6 +13,7 @@ import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
 import org.rconfalonieri.nzuardi.shootingapp.security.jwt.TokenProvider;
 import org.rconfalonieri.nzuardi.shootingapp.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,6 @@ import java.util.stream.Collectors;
  * Service to handle user details.
  */
 @Service
-@AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
@@ -45,9 +45,11 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private TokenProvider tokenProvider;
 
+    @Value("${serverProd.uri}")
+    private String uri;
+
     /**
      * Load user by email.
-     * @param email The username.
      * @return The user details.
      * @throws UsernameNotFoundException
      */
@@ -76,6 +78,7 @@ public class CustomUserDetailsService implements UserDetailsService {
      * @return The mail response.
      */
     public MailResponse sendMailPostRegistrazione(User user) {
+
         // Create a new token to reset the password.
         String token = UUID.randomUUID().toString();
         PasswordResetToken passwordResetToken = new PasswordResetToken();
@@ -88,8 +91,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         // Send the email
         Map<String, Object> model = new HashMap<>();
         model.put("name", user.getNome());
-        model.put("indirizzo", "http://localhost:8080/" + "user/setPassword?token=" + token );
-        return emailService.sendEmail(user.getEmail(),"Shooting App | Imposta la tua password", model, "setPassword");
+        model.put("indirizzo", uri + "user/setPassword?token=" + token );
+
+        if(user.getAuthorities().stream().anyMatch(a -> a.getName().equals("ROLE_USER")))
+            return emailService.sendEmail(user.getEmail(),"Shooting App | Imposta la tua password", model, "setPasswordUtente");
+
+        return emailService.sendEmail(user.getEmail(),"Shooting App | Imposta la tua password", model, "setPasswordAdmin&Istruttori");
     }
 
 

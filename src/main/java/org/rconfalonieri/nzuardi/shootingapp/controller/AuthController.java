@@ -50,21 +50,15 @@ public class AuthController {
         return userHelper.authorize(loginDto);
     }
 
-    /**
-     * Dati per register nel seguente formato
-     * {
-     * "email" : "mariorossi@gmail.com",
-     * "password" : "ciao1234",
-     * "firstName" : "mario",
-     * "lastName" : "rossi",
-     * "region" : 3
-     * }
-     */
-    @PostMapping("/register/user") //TODO funzione disponibile sono per gli admin
-    public User registerUser(@Valid @RequestBody UserDTO userDTO) {
-        return userHelper.registerUser(userDTO);
+    @GetMapping("/registerFirstUser")
+    public ResponseEntity<?> registerUser() {
+         boolean status = userHelper.registerFirstUser();
+            if (status) {
+                return ResponseEntity.ok(new ApiResponseDto(true, "User registered successfully"));
+            } else {
+                return ResponseEntity.ok(new ApiResponseDto(false, "User already registered"));
+            }
     }
-
 
     //TODO register admin , solo altri admin possono farlo
 

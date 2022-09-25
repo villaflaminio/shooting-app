@@ -3,6 +3,7 @@ package org.rconfalonieri.nzuardi.shootingapp.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
+import org.rconfalonieri.nzuardi.shootingapp.model.dto.UserDTO;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
 import org.rconfalonieri.nzuardi.shootingapp.security.helper.UserHelper;
 import org.rconfalonieri.nzuardi.shootingapp.service.UserService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -35,11 +37,50 @@ public class AdminController {
       return ResponseEntity.ok("ok");
     }
 
+    /**
+     * Dati per register nel seguente formato
+     * {
+     *     "nome":"mario ",
+     *     "cognome" :"rossi",
+     *     "email" : "mariorossi@gmail.com",
+     *     "password" : "password"
+     * }
+     */
+    @PostMapping("/registerUser") //TODO funzione disponibile sono per gli admin
+    public User registerUser(@Valid @RequestBody UserDTO userDTO) {
+        return userHelper.registerUser(userDTO);
+    }
+
+    /**
+     * Dati per register nel seguente formato
+     * {
+     *     "nome":"mario ",
+     *     "cognome" :"rossi",
+     *     "email" : "mariorossi@gmail.com",
+     *     "password" : "password"
+     * }
+     */
+    @PostMapping("/registerAdmin") //TODO funzione disponibile sono per gli admin
+    public User registerAdmin(@Valid @RequestBody UserDTO userDTO) {
+        return userHelper.registerAdmin(userDTO);
+    }
+
+    /**
+     * Dati per register nel seguente formato
+     * {
+     *     "nome":"mario ",
+     *     "cognome" :"rossi",
+     *     "email" : "mariorossi@gmail.com",
+     *     "password" : "password"
+     * }
+     */
+    @PostMapping("/registerIstruttore") //TODO funzione disponibile sono per gli admin
+    public User registerIstruttore(@Valid @RequestBody UserDTO userDTO) {
+        return userHelper.registerIstruttore(userDTO);
+    }
 
     /**
      * Update the user password
-     * @param userPrincipal the current user
-     * @param newPassword the new password
      * @return the updated user
      */
 //    @PostMapping("/changePassword")

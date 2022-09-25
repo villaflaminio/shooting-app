@@ -8,7 +8,6 @@ import org.rconfalonieri.nzuardi.shootingapp.model.User;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginDTO;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.UserDTO;
 import org.rconfalonieri.nzuardi.shootingapp.repository.AuthorityRepository;
-import org.rconfalonieri.nzuardi.shootingapp.repository.PasswordResetTokenRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.TesserinoRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
 import org.rconfalonieri.nzuardi.shootingapp.security.CustomUserDetailsService;
@@ -34,15 +33,20 @@ import static org.rconfalonieri.nzuardi.shootingapp.exception.UserException.user
 public class UserHelper {
     private final TokenProvider tokenProvider;
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    AuthorityRepository authorityRepository;
+    private TesserinoRepository tesserinoRepository;
     @Autowired
-    private PasswordEncoder bcryptEncoder;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private AuthorityRepository authorityRepository;
 
     @Autowired
-    TesserinoRepository tesserinoRepository;
+    private PasswordEncoder bcryptEncoder;
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
+
     public UserHelper(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
         this.tokenProvider = tokenProvider;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
@@ -61,57 +65,51 @@ public class UserHelper {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         boolean rememberMe = loginDto.rememberMe != null && loginDto.isRememberMe();
-
-
-
         return tokenProvider.createAuthResponse(authentication,user, rememberMe);
     }
 
     public void ceckUser(UserDTO userDTO) {
         Preconditions.checkArgument(Objects.nonNull(userDTO.password));
-        Preconditions.checkArgument(Objects.nonNull(userDTO.role));
         Preconditions.checkArgument(Objects.nonNull(userDTO.nome));
         Preconditions.checkArgument(Objects.nonNull(userDTO.cognome));
 
     }
 
     public User registerUser(UserDTO userDTO) {
-        userDTO.role = "USER";
-        return register(userDTO);
 
+        User user = register(userDTO,getRoles("USER"));
+        generateTesserino(user);
+        return userRepository.findById(user.getId()).orElseThrow(() -> new UserException(USER_NOT_FOUND));
     }
+    public boolean registerFirstUser() {
+        Set<Authority> author = new HashSet<>();
 
-    public User registerSecretary(UserDTO userDTO) {
-        userDTO.role = "SECRETARY";
-        return register(userDTO);
-
-    }
-
-    public User registerAdminSecretary(UserDTO userDTO) {
-        userDTO.role = "ADMIN_SECRETARY";
-        return register(userDTO);
-
+        UserDTO userDTO = UserDTO.builder()
+                .nome("admin")
+                .cognome("admin")
+                .password("password")
+                .email("admin@gmail.com")
+                .build();
+        author.add(authorityRepository.existsByName("ROLE_USER") ?  authorityRepository.getByName("ROLE_USER") : authorityRepository.save(new Authority("ROLE_USER")) );
+        author.add(authorityRepository.existsByName("ROLE_ISTRUTTORE") ? authorityRepository.getByName("ROLE_ISTRUTTORE") : authorityRepository.save(new Authority("ROLE_ISTRUTTORE")));
+        author.add(authorityRepository.existsByName("ROLE_ADMIN") ?  authorityRepository.getByName("ROLE_ADMIN") : authorityRepository.save(new Authority("ROLE_ADMIN")));
+        register(userDTO,author);
+        return true;
     }
 
     public User registerAdmin(UserDTO userDTO) {
-        userDTO.role = "ADMIN";
-        return register(userDTO);
+        User user = register(userDTO,getRoles("ADMIN"));
+        customUserDetailsService.sendMailPostRegistrazione(user);
+        return user;
     }
 
-    private User register(UserDTO userDTO)  {
-        ceckUser(userDTO);
-        if (userRepository.existsByEmail(userDTO.email) || role(userDTO).isEmpty()) {
-            throw new UserException(USER_ALREADY_EXISTS);
-        }
-        User utente = User.builder()
-                .password(bcryptEncoder.encode(userDTO.password))
-                .nome(userDTO.nome)
-                .email(userDTO.email)
-                .cognome(userDTO.cognome)
-                .sospeso(false)
-                .authorities(role(userDTO))
-                .build();
+    public User registerIstruttore(UserDTO userDTO) {
+        User user = register(userDTO,getRoles("ISTRUTTORE"));
+        customUserDetailsService.sendMailPostRegistrazione(user);
+        return user;
+    }
 
+    private Tesserino generateTesserino(User utente)  {
         Date dataRilascio = new Date();
         ByteArrayOutputStream stream = QRCode
                 .from("Tesserino id: " + utente.getId() + " Nome: " + utente.getNome() + " Cognome: " + utente.getCognome())
@@ -125,27 +123,42 @@ public class UserHelper {
                 .dataScadenza(new Date(dataRilascio.getTime() + (1000L * 60 * 60 * 24 * 365)))
                 .qrCode("data:image/png;base64," + Base64.getEncoder().encodeToString(stream.toByteArray()))
                 .build();
-        userRepository.save(utente);
-        tesserinoRepository.save(tesserino);
+        //  customUserDetailsService.sendMailPostRegistrazione(utente); //todo riabilitare dopo modifica credenziali gmail
 
-      //  customUserDetailsService.sendMailPostRegistrazione(utente); //todo riabilitare dopo modifica credenziali gmail
+        return tesserinoRepository.save(tesserino);
 
-        Optional<User> user = userRepository.findById(utente.getId());
-        if (user.isPresent()) {
-            return user.get();
-        }
-        return null;
     }
 
-    private Set<Authority> role(UserDTO userDTO) {
+    private User register(UserDTO userDTO,Set<Authority> roles)  {
+        ceckUser(userDTO);
+        if (userRepository.existsByEmail(userDTO.email)) {
+            throw new UserException(USER_ALREADY_EXISTS);
+        }
+        User utente = User.builder()
+                .password(bcryptEncoder.encode(userDTO.password))
+                .nome(userDTO.nome)
+                .email(userDTO.email)
+                .cognome(userDTO.cognome)
+                .sospeso(false)
+                .authorities(roles)
+                .build();
+
+        return userRepository.save(utente);
+
+    }
+
+    private Set<Authority> getRoles(String role) {
         Set<Authority> author = new HashSet<>();
-        switch (userDTO.role) {
+        switch (role) {
             case "USER":
                 author.add(authorityRepository.getByName("ROLE_USER"));
                 break;
-
+            case "ISTRUTTORE":
+                author.add(authorityRepository.getByName("ROLE_ISTRUTTORE"));
+                break;
             case "ADMIN":
                 author.add(authorityRepository.getByName("ROLE_USER"));
+                author.add(authorityRepository.getByName("ROLE_ISTRUTTORE"));
                 author.add(authorityRepository.getByName("ROLE_ADMIN"));
                 break;
             default:

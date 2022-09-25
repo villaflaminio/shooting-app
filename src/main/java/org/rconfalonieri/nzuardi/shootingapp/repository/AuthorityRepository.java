@@ -12,4 +12,5 @@ import org.springframework.stereotype.Component;
 @RepositoryRestResource(exported = false)
 public interface AuthorityRepository extends JpaRepository<Authority, String> {
     Authority getByName(String name);
+   boolean existsByName(String name);
 }

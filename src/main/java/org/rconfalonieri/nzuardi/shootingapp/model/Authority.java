@@ -1,6 +1,7 @@
 package org.rconfalonieri.nzuardi.shootingapp.model;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,12 +13,17 @@ import java.util.Objects;
 @Data
 @Entity
 @Table(name = "AUTHORITY")
+@NoArgsConstructor
 public class Authority {
 
     @Id
     @Column(name = "NAME", length = 50)
     @NotNull
     private String name;
+
+    public Authority(String name) {
+        this.name = name;
+    }
 
     @Override
     public boolean equals(Object o) {
