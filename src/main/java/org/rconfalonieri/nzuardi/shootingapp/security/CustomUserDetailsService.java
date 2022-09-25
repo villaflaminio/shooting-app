@@ -74,12 +74,11 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // Save the password reset token
         passwordResetTokenRepository.save(passwordResetToken);
-
         // Send the email
         Map<String, Object> model = new HashMap<>();
         model.put("name", user.getNome());
         model.put("indirizzo", "http://localhost:8080/" + "user/setPassword?token=" + token );
-        return emailService.sendEmail(user.getEmail(),"Set new password",model,"src/main/resources/mail-templates/setPassword");
+        return emailService.sendEmail(user.getEmail(),"Shooting App | Imposta la tua password", model, "setPassword");
     }
 
 

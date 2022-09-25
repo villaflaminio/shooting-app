@@ -147,15 +147,14 @@ public class UserHelper {
                 .build();
         userRepository.save(utente);
         tesserinoRepository.save(tesserino);
+
         customUserDetailsService.sendMailPostRegistrazione(utente);
 
         Optional<User> user = userRepository.findById(utente.getId());
         if (user.isPresent()) {
-
             return user.get();
         }
         return null;
-
     }
 
     private Set<Authority> role(UserDTO userDTO) {

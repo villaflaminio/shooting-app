@@ -58,9 +58,6 @@ public class EmailService {
             helper.addInline("twitter.png", new ClassPathResource("mail-templates/images/twitter2x.png"));
             helper.addInline("logo-background.png", new ClassPathResource("mail-templates/images/logo-no-background.png"));
 
-//            String qrCode = "iVBORw0KGgoAAAANSUhEUgAAAV4AAAFeAQMAAAD35eVZAAAABlBMVEUAAAD///+l2Z/dAAAAAWJLR0QB/wIt3gAAAeFJREFUaN7t2juSgzAQBNB2ERDqCByFo4mjcRQdgVABRW8wM9hrez8J0m5VK6LgOZqSNGoZ/P3YISwsLCwsLPw38AYbE+tAIq9IFQC5+ocs3B6PJMl12kYeQGbBuN9IrhNJUrgL3gHkdbJS5hWpDke8uQl3xawAuGAivYLC3bHPLxaMJH8qt/C1ONY6DAdIFtjD9wuj8KU4uoJt3G9WOH/4roUQvhSfY4O3asDA5yHcFPtsWpG43wgA8IkGjDsg3AGTO6Jttq4gShnHHOFe2HsAxwe4zLTmjcLtsb8piSR9J7LTDSDcCZO+74wkgflTSnO86QqEL8e+snkUg7xOJA8Ac0l25BRujkke4AIAwwFgvtfV55dwc2yhJeYSuKQKM3H2FG6PfbtJ58pWo5RVuA8+P0WkbMd/LoD1CVm4Od7iquX+cB7/X7sC4SbYUv1lLql6DoBIkuOOTLg13iLV9/mFiSQ9nHnp64Sb4HP4r1gQhXvb1wk3wA85v2E+BP58biGE2+C4EWONoMywV1C4C44L/diJgIH3wP+L23/hJjjCmbOmb3cr4aaY3GHxvudjXsos3AFbvexPYlyAVGH3lYlfbkDC1+KzKwAAZJZUBxKYrWcT7oB/N4SFhYWFhYX/Gf4AT8YBIH5wdHUAAAAASUVORK5CYII=";
-//            byte[] qrCodeBytes = javax.xml.bind.DatatypeConverter.parseBase64Binary(qrCode);
-//            helper.addInline("qr-code.png", qrCodeBytes);
             javaMailSender.send(message);
 
             response.setMessage(ftlFileName + " | Mail sent to : " + to);
