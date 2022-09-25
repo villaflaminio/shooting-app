@@ -105,9 +105,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //todo aggiungere tutti i permessi per le varie rotte
 
-                .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
-                .antMatchers("/api/user/**").hasAuthority("ROLE_USER")
+//                .antMatchers("/api/auth/**").permitAll()
+//                .antMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+//                .antMatchers("/api/user/**").hasAuthority("ROLE_USER")
+                .antMatchers("/**").permitAll()
 
 
                 .anyRequest().authenticated()

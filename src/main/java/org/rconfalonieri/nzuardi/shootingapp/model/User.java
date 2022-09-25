@@ -63,9 +63,6 @@ public class User {
     @OneToMany(mappedBy = "utentePren")
     private List<Prenotazione> prenotazioni;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "valutazione_id", referencedColumnName = "id")
-    private Valutazione valutazione;
 
     @ManyToMany
     @JoinTable(

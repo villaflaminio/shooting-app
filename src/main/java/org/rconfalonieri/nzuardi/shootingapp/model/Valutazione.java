@@ -23,11 +23,11 @@ public class Valutazione {
     private Long id;
 
     @OneToOne(mappedBy = "valutazione")
-    private User utenteValutato;
+    private Prenotazione utenteValutatore;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "istruttore_id", referencedColumnName = "id")
-    private Istruttore utenteValutante;
+    private Istruttore utenteValutato;
 
     @Column(name="voto")
     @NotNull

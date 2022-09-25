@@ -46,5 +46,8 @@ public class Prenotazione {
     @OneToMany(mappedBy = "prenotazione")
     private List<Arma> armi;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "valutazione_id", referencedColumnName = "id")
+    private Valutazione valutazione;
 
 }

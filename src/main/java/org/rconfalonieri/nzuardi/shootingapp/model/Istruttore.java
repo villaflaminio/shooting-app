@@ -35,7 +35,7 @@ public class Istruttore {
     @JoinColumn(name = "prenotazione_id", referencedColumnName = "id")
     private Prenotazione prenotazione;
 
-    @OneToOne(mappedBy = "utenteValutante")
+    @OneToOne(mappedBy = "utenteValutato")
     private Valutazione valutazione;
 
 }
