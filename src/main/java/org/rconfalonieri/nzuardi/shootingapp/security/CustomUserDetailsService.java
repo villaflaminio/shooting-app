@@ -45,6 +45,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private TokenProvider tokenProvider;
 
+    @Value("app.auth.refreshTokenExpiration")
+    private String refreshTokenExpiration;
+
     @Value("${serverProd.uri}")
     private String uri;
 
@@ -55,12 +58,21 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String tesserinoId)
+    public UserDetails loadUserByUsername(String username)
             throws UsernameNotFoundException {
+        if(username.contains("@")){
 
-        return userRepository.findByActualTesserinoId(tesserinoId)
-                .map(this::createSpringSecurityUser)
-                .orElseThrow(() -> new UsernameNotFoundException("User " + " was not found in the database"));
+            return  userRepository.findByEmail(username)
+                    .map(this::createSpringSecurityUser)
+                    .orElseThrow(() -> new ResourceNotFoundException("User " +username+ " was not found in the database"));
+
+        }else{
+            long tesserinoId = Long.parseLong(username);
+            return userRepository.findByActualTesserinoId(tesserinoId)
+                    .map(this::createSpringSecurityUser)
+                    .orElseThrow(() -> new ResourceNotFoundException("User with tesserinoId" + username + " was not found in the database"));
+        }
+
     }
 
     private org.springframework.security.core.userdetails.User createSpringSecurityUser(User user) {
@@ -84,7 +96,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         PasswordResetToken passwordResetToken = new PasswordResetToken();
         passwordResetToken.setToken(token);
         passwordResetToken.setUser(user);
-        passwordResetToken.setExpiryDate(Instant.now().plusSeconds(Long.parseLong(Objects.requireNonNull(env.getProperty("app.auth.refreshTokenExpiration")))));
+        passwordResetToken.setExpiryDate(Instant.now().plusSeconds(Long.parseLong(refreshTokenExpiration)));
 
         // Save the password reset token
         passwordResetTokenRepository.save(passwordResetToken);

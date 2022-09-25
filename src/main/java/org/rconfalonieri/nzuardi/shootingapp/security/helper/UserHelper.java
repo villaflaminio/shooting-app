@@ -1,11 +1,13 @@
 package org.rconfalonieri.nzuardi.shootingapp.security.helper;
 import com.google.common.base.Preconditions;
 import net.glxn.qrgen.javase.QRCode;
+import org.rconfalonieri.nzuardi.shootingapp.exception.ResourceNotFoundException;
 import org.rconfalonieri.nzuardi.shootingapp.exception.UserException;
 import org.rconfalonieri.nzuardi.shootingapp.model.Authority;
 import org.rconfalonieri.nzuardi.shootingapp.model.Tesserino;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginDTO;
+import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginUserDTO;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.UserDTO;
 import org.rconfalonieri.nzuardi.shootingapp.repository.AuthorityRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.TesserinoRepository;
@@ -52,9 +54,9 @@ public class UserHelper {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
     }
 
-    //TODO login con email per admin e istruttori
-    public ResponseEntity<?> authorize(@Valid @RequestBody LoginDTO loginDto) {
-        User user = userRepository.findByActualTesserinoId(loginDto.idTesserino).orElseThrow(() -> new UserException(IDTESSERINO_NOT_EXIST));
+    public ResponseEntity<?> authorizeUser(@Valid @RequestBody LoginUserDTO loginDto) {
+
+        User user = userRepository.findByActualTesserinoId(loginDto.idTesserino).orElseThrow(() -> new ResourceNotFoundException("idTesserino", "idTesserino", loginDto.idTesserino));
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.idTesserino, loginDto.password);
@@ -68,6 +70,21 @@ public class UserHelper {
         return tokenProvider.createAuthResponse(authentication,user, rememberMe);
     }
 
+
+    public ResponseEntity<?> authorize(@Valid @RequestBody LoginDTO loginDto) {
+        User user = userRepository.findByEmail(loginDto.email).orElseThrow(() -> new ResourceNotFoundException("email", "email", loginDto.email));
+
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(loginDto.email, loginDto.password);
+
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        //SecurityContextHolder è una classe di supporto, che forniscono l'accesso al contesto di protezione
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        boolean rememberMe = loginDto.rememberMe != null && loginDto.isRememberMe();
+        return tokenProvider.createAuthResponse(authentication,user, rememberMe);
+    }
     public void ceckUser(UserDTO userDTO) {
         Preconditions.checkArgument(Objects.nonNull(userDTO.password));
         Preconditions.checkArgument(Objects.nonNull(userDTO.nome));
@@ -99,13 +116,13 @@ public class UserHelper {
 
     public User registerAdmin(UserDTO userDTO) {
         User user = register(userDTO,getRoles("ADMIN"));
-        customUserDetailsService.sendMailPostRegistrazione(user);
+        //customUserDetailsService.sendMailPostRegistrazione(user); todo decommentare dopo cambio mail
         return user;
     }
 
     public User registerIstruttore(UserDTO userDTO) {
         User user = register(userDTO,getRoles("ISTRUTTORE"));
-        customUserDetailsService.sendMailPostRegistrazione(user);
+       // customUserDetailsService.sendMailPostRegistrazione(user); todo decommentare dopo cambio mail
         return user;
     }
 

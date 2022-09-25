@@ -21,7 +21,7 @@ public class AuthResponseDto {
     public Set<Authority>  authorities ;
 
     public String token;
-    public String refreshToken;
+  //  public String refreshToken;
     public Date expiration;
 
 }

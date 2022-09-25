@@ -29,7 +29,7 @@ public class User {
     private Long id;
 
    @Formula("(select t.id from tesserino t where t.utente_id = ID and t.data_rilascio = (select max(t2.data_rilascio) from tesserino t2 where t2.utente_id = ID))")
-    private String actualTesserinoId;
+    private Long actualTesserinoId;
 
    @Column(name = "email", length = 100)
     @NotNull

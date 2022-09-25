@@ -46,7 +46,7 @@ public class AdminController {
      *     "password" : "password"
      * }
      */
-    @PostMapping("/registerUser") //TODO funzione disponibile sono per gli admin
+    @PostMapping("/register/user") //TODO funzione disponibile sono per gli admin
     public User registerUser(@Valid @RequestBody UserDTO userDTO) {
         return userHelper.registerUser(userDTO);
     }
@@ -60,7 +60,7 @@ public class AdminController {
      *     "password" : "password"
      * }
      */
-    @PostMapping("/registerAdmin") //TODO funzione disponibile sono per gli admin
+    @PostMapping("/register/admin") //TODO funzione disponibile sono per gli admin
     public User registerAdmin(@Valid @RequestBody UserDTO userDTO) {
         return userHelper.registerAdmin(userDTO);
     }
@@ -74,7 +74,7 @@ public class AdminController {
      *     "password" : "password"
      * }
      */
-    @PostMapping("/registerIstruttore") //TODO funzione disponibile sono per gli admin
+    @PostMapping("/register/istruttore") //TODO funzione disponibile sono per gli admin
     public User registerIstruttore(@Valid @RequestBody UserDTO userDTO) {
         return userHelper.registerIstruttore(userDTO);
     }

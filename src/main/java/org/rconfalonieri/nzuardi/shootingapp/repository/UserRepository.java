@@ -21,9 +21,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     //    @Formula("(select t.id from tesserino t where t.utente_id = ID and t.data_rilascio = (select max(t2.data_rilascio) from tesserino t2 ))")
 
     @Query("select u from User u where u.actualTesserinoId = ?1")
-    Optional<User> findByActualTesserinoId(String tesserinoId);
+    Optional<User> findByActualTesserinoId(Long tesserinoId);
 
     boolean existsByEmail(String email);
 
     Optional<User> findByEmail(String userEmail);
+
+    @Query("select u from User u where u.email = ?1 and u.id not in (select t.utente.id from Tesserino t )")
+    boolean isOnlyUser(String email);
 }

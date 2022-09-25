@@ -5,6 +5,7 @@ import org.rconfalonieri.nzuardi.shootingapp.model.PasswordResetToken;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.ApiResponseDto;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginDTO;
+import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginUserDTO;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.UserDTO;
 import org.rconfalonieri.nzuardi.shootingapp.repository.PasswordResetTokenRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
@@ -44,6 +45,12 @@ public class AuthController {
     private PasswordResetTokenRepository passwordResetTokenRepository;
 
     //TODO gestire login per admin ed istruttori con email e password
+    @CrossOrigin(origins = "*")
+    @PostMapping("/login/user")
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginUserDTO loginUserDTO) {
+        return userHelper.authorizeUser(loginUserDTO);
+    }
+
     @CrossOrigin(origins = "*")
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDto) {

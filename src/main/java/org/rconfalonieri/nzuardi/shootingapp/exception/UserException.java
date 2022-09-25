@@ -13,6 +13,7 @@ public class UserException extends RuntimeException {
         AUTHORITY_NOT_EXIST,
         USER_NOT_LOGGED_IN,
         USER_NOT_FOUND,
+        EMAIL_NOT_FOUND,
         AUTHORITY_UNREACHABALE
     }
 
