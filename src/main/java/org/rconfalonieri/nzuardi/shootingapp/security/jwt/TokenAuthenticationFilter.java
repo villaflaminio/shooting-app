@@ -1,9 +1,7 @@
 package org.rconfalonieri.nzuardi.shootingapp.security.jwt;
 
-import org.rconfalonieri.nzuardi.shootingapp.security.CustomUserDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,15 +19,14 @@ import java.io.IOException;
  * Filtra le richieste in arrivo ed aggiunge Spring Security
  * per gli header che corrispondono ad un utente valido
  */
-public class JWTFilter extends OncePerRequestFilter {
-    private static final Logger logger = LoggerFactory.getLogger(JWTFilter.class);
-
+public class TokenAuthenticationFilter extends OncePerRequestFilter {
+    private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final Logger LOG = LoggerFactory.getLogger(JWTFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
     private final TokenProvider tokenProvider;
 
 
-    public JWTFilter(TokenProvider tokenProvider) {
+    public TokenAuthenticationFilter(TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;
     }
 

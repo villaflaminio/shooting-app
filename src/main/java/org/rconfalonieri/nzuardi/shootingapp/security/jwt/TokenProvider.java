@@ -1,6 +1,5 @@
 package org.rconfalonieri.nzuardi.shootingapp.security.jwt;
 
-import com.google.gson.Gson;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -26,7 +25,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,25 +36,16 @@ public class TokenProvider implements InitializingBean {
      * Logger serve per scrivere i log durante l'esecuzione del programma
      **/
     private final Logger log = LoggerFactory.getLogger(TokenProvider.class);
-    private final String base64Secret;
-    private final long tokenValidityInMilliseconds;
-    private final long tokenValidityInMillisecondsForRememberMe;
-
+    @Value("${jwt.base64-secret}")
+    private  String base64Secret;
+    @Value("${jwt.token-validity-in-seconds}")
+    private  long tokenValidityInMilliseconds;
+    @Value("${jwt.token-validity-in-seconds-for-remember-me}")
+    private  long tokenValidityInMillisecondsForRememberMe;
     private Key key;
     @Autowired
     private UserRepository userRepository;
 
-    /**
-     * Da application.yml prendo i valori che indicano la durata dei token
-     **/
-    public TokenProvider(
-            @Value("${jwt.base64-secret}") String base64Secret, // chiave per criptare
-            @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds,
-            @Value("${jwt.token-validity-in-seconds-for-remember-me}") long tokenValidityInSecondsForRememberMe) {
-        this.base64Secret = base64Secret;
-        this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
-        this.tokenValidityInMillisecondsForRememberMe = tokenValidityInSecondsForRememberMe * 1000;
-    }
 
     /**
      * Dopo che e' stato instanziato il tokenProvider setto la chiave base64Secret nella variabile globale key
@@ -72,14 +61,7 @@ public class TokenProvider implements InitializingBean {
      * <p>
      * UserRestController con api/authenticate
      **/
-    public ResponseEntity<?> createToken(Authentication authentication, User user, boolean rememberMe) {
-        // Get the user principal
-//        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
+    public ResponseEntity<?> createAuthResponse(Authentication authentication, User user, boolean rememberMe) {
         long now = (new Date()).getTime();
         Date validity;
         if (rememberMe) {
@@ -88,16 +70,7 @@ public class TokenProvider implements InitializingBean {
             validity = new Date(now + this.tokenValidityInMilliseconds);
         }
 
-
-        String token =  Jwts.builder()
-                .setSubject(String.valueOf(user.getId()))
-                .claim(AUTHORITIES_KEY, authorities)
-                .setIssuedAt(new Date())
-                .setHeaderParam("typ", "JWT")
-                .setAudience("secure-app")
-                .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(validity)
-                .compact();
+        String token =createToken( authentication,  user,validity);
 
         AuthResponseDto authResponseDto =  AuthResponseDto.builder()
                 .id(user.getId())
@@ -108,29 +81,45 @@ public class TokenProvider implements InitializingBean {
                 .expiration(validity)
                 .build();
 
-
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + token);
+        httpHeaders.add(TokenAuthenticationFilter.AUTHORIZATION_HEADER, "Bearer " + token);
         httpHeaders.set("Access-Control-Expose-Headers", "*");
 
         return new ResponseEntity<>(authResponseDto, httpHeaders, HttpStatus.OK);
 
     }
 
-    public Authentication getAuthentication(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(key)
-                .parseClaimsJws(token)
-                .getBody();
 
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+    public String createToken(Authentication authentication, User user, Date validity) {
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
 
-        User user = userRepository.findById(Long.parseLong(claims.getSubject())).orElseThrow(() -> new RuntimeException("User not found"));
-        return new UsernamePasswordAuthenticationToken(user, token, authorities);
+        return Jwts.builder()
+                .setSubject(String.valueOf(user.getId()))
+                .claim(AUTHORITIES_KEY, authorities)
+                .setIssuedAt(new Date())
+                .setHeaderParam("typ", "JWT")
+                .setAudience("secure-app")
+                .signWith(key, SignatureAlgorithm.HS512)
+                .setExpiration(validity)
+                .compact();
     }
+
+//    public Authentication getAuthentication(String token) {
+//        Claims claims = Jwts.parser()
+//                .setSigningKey(key)
+//                .parseClaimsJws(token)
+//                .getBody();
+//
+//        Collection<? extends GrantedAuthority> authorities =
+//                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+//                        .map(SimpleGrantedAuthority::new)
+//                        .collect(Collectors.toList());
+//
+//        User user = userRepository.findById(Long.parseLong(claims.getSubject())).orElseThrow(() -> new RuntimeException("User not found"));
+//        return new UsernamePasswordAuthenticationToken(user, token, authorities);
+//    }
 
     public Long getUserIdFromToken(String token) {
         Claims claims = Jwts.parser()

@@ -1,13 +1,10 @@
 package org.rconfalonieri.nzuardi.shootingapp.security.helper;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import net.glxn.qrgen.javase.QRCode;
 import org.rconfalonieri.nzuardi.shootingapp.exception.UserException;
 import org.rconfalonieri.nzuardi.shootingapp.model.Authority;
 import org.rconfalonieri.nzuardi.shootingapp.model.Tesserino;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
-import org.rconfalonieri.nzuardi.shootingapp.model.dto.AuthResponseDto;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginDTO;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.UserDTO;
 import org.rconfalonieri.nzuardi.shootingapp.repository.AuthorityRepository;
@@ -15,31 +12,20 @@ import org.rconfalonieri.nzuardi.shootingapp.repository.PasswordResetTokenReposi
 import org.rconfalonieri.nzuardi.shootingapp.repository.TesserinoRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
 import org.rconfalonieri.nzuardi.shootingapp.security.CustomUserDetailsService;
-import org.rconfalonieri.nzuardi.shootingapp.security.jwt.JWTFilter;
 import org.rconfalonieri.nzuardi.shootingapp.security.jwt.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.imageio.ImageIO;
 import javax.validation.Valid;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.time.Year;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.rconfalonieri.nzuardi.shootingapp.exception.UserException.userExceptionCode.*;
 
@@ -56,11 +42,7 @@ public class UserHelper {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Autowired
-    private PasswordResetTokenRepository passwordResetTokenRepository;
-    @Autowired
     TesserinoRepository tesserinoRepository;
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
     public UserHelper(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
         this.tokenProvider = tokenProvider;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
@@ -82,7 +64,7 @@ public class UserHelper {
 
 
 
-        return tokenProvider.createToken(authentication,user, rememberMe);
+        return tokenProvider.createAuthResponse(authentication,user, rememberMe);
     }
 
     public void ceckUser(UserDTO userDTO) {
@@ -170,35 +152,6 @@ public class UserHelper {
                 throw new UserException(AUTHORITY_NOT_EXIST);
         }
         return author;
-    }
-
-    /**
-     * Object to return as body in JWT Authentication.
-     */
-    public static class JWTToken {
-
-        private final UserDTO user;
-        private String idToken;
-
-        JWTToken(String idToken, User user, String authorities) {
-            this.idToken = idToken;
-            this.user = new UserDTO(user);
-            this.user.role = authorities;
-        }
-
-        @JsonProperty("id_token")
-        String getIdToken() {
-            return idToken;
-        }
-
-        void setIdToken(String idToken) {
-            this.idToken = idToken;
-        }
-
-        @JsonProperty("user")
-        UserDTO getUser() {
-            return user;
-        }
     }
 
 

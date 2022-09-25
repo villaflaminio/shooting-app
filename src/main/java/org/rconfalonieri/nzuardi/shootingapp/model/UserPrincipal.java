@@ -11,11 +11,10 @@ import java.util.stream.Collectors;
  * This class represents the user principal.
  */
 public class UserPrincipal implements  UserDetails {
-    private Long id;
-    private String email;
-    private String password;
-    private Collection<? extends GrantedAuthority> authorities;
-    private Map<String, Object> attributes;
+    private final Long id;
+    private final String email;
+    private final String password;
+    private final Collection<? extends GrantedAuthority> authorities;
 
     /**
      * Instantiates a new User principal.
@@ -94,8 +93,4 @@ public class UserPrincipal implements  UserDetails {
         return authorities;
     }
 
-
-    public void setAttributes(Map<String, Object> attributes) {
-        this.attributes = attributes;
-    }
 }
