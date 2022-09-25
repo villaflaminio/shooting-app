@@ -44,7 +44,6 @@ public class AuthController {
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepository;
 
-    //TODO gestire login per admin ed istruttori con email e password
     @CrossOrigin(origins = "*")
     @PostMapping("/login/user")
     public ResponseEntity<?> loginUser(@Valid @RequestBody LoginUserDTO loginUserDTO) {
@@ -67,11 +66,6 @@ public class AuthController {
             }
     }
 
-    //TODO register admin , solo altri admin possono farlo
-
-    //TODO register istruttore , solo gli admin
-
-
     /**
      * Reset the password of the user.
      * @param userEmail the email of the user to reset the password
@@ -86,8 +80,6 @@ public class AuthController {
         return ResponseEntity.ok(customUserDetailsService.sendMailRecoveryPassword(user));
     }
 
-
-    //TODO: api per inviare email di configurazione password (dopo la registrazione da parte dell'admin)
 
     /**
      * Retrieve the authentication of the user with the given token to request a change of password.
