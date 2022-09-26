@@ -2,6 +2,7 @@ package org.rconfalonieri.nzuardi.shootingapp.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.rconfalonieri.nzuardi.shootingapp.model.Arma;
 import org.rconfalonieri.nzuardi.shootingapp.model.PostazioniTiro;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.PostazioniTiroDto;
 import org.rconfalonieri.nzuardi.shootingapp.repository.PostazioniTiroRepository;
@@ -154,5 +155,17 @@ public class PostazioniTiroService {
         Example<PostazioniTiro> example = Example.of(probe, matcher);
 
         return ResponseEntity.ok(postazioniTiroRepository.findAll(example, pageable));
+    }
+
+    public PostazioniTiro setAttiva(Long id, Boolean attiva) {
+        //disabilita l'arma dato il seriale
+        PostazioniTiro postazioniTiro = postazioniTiroRepository.findPostazioniTiroById(id);
+        if (postazioniTiro != null){
+            postazioniTiro.setAttiva(attiva);
+            return postazioniTiroRepository.save(postazioniTiro);
+        }else{
+            log.error("postazioniTiro non trovata");
+            throw new ResourceNotFoundException("postazioniTiro non trovata");
+        }
     }
 }

@@ -2,6 +2,7 @@ package org.rconfalonieri.nzuardi.shootingapp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.rconfalonieri.nzuardi.shootingapp.model.Arma;
 import org.rconfalonieri.nzuardi.shootingapp.model.PostazioniTiro;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.PostazioniTiroDto;
 import org.rconfalonieri.nzuardi.shootingapp.service.PostazioniTiroService;
@@ -88,7 +89,7 @@ public class PostazioniTiroController {
      * @param sortDirection Direzione di ordinamento.
      * @return Lista di postazioni di tiro filtrate.
      */
-    @Operation(summary = "filter", description = "Filtra gli abbonamenti")
+    @Operation(summary = "filter", description = "Filtra le postazioni di tiro")
     @PostMapping("/filter")
     ResponseEntity<Page<PostazioniTiro>> filter(
             @RequestBody(required = false) PostazioniTiro probe,
@@ -101,5 +102,10 @@ public class PostazioniTiroController {
 
     //todo api per disattivare la postazione di tiro
 
+    @Operation(summary = "setAttiva", description = "Disabilita una postazione di tiro")
+    @PutMapping("/setAttiva/{id}")
+    public ResponseEntity<PostazioniTiro> disabilita(@PathVariable("id") Long id, @RequestParam Boolean disponibilita) {
+        return ResponseEntity.ok(postazioniTiroService.setAttiva(id,disponibilita));
+    }
 
 }

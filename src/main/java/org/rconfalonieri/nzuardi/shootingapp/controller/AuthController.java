@@ -94,7 +94,7 @@ public class AuthController {
      * @param token the request to reset the password
      * @return the response
      */
-    @GetMapping("/getAuthenticationFromEmail") //TODO Da finire
+    @GetMapping("/getAuthenticationFromEmail")
     public ResponseEntity<?> getAuthenticationFromEmail(@RequestParam("token") String token) {
         // Find the password reset token using the given token.
         Optional<PasswordResetToken> userPasswToken = passwordResetTokenRepository.findByToken(token);

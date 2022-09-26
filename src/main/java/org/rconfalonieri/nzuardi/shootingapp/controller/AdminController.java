@@ -98,7 +98,7 @@ public class AdminController {
 //        // Save the user.
 //        return userRepository.save(user);
 //    }
-    @GetMapping("/actualUser") //TODO: controllare se funziona
+    @GetMapping("/actualUser")
     public ResponseEntity<User> getActualUser() {
         return ResponseEntity.ok(userService.getUserWithAuthorities().get());
     }
@@ -131,7 +131,7 @@ public class AdminController {
      *           da decidere i base al RequestParam state
      * @return L'utente eliminato
      */
-    @PostMapping("user/setStateUser/{id}")
+    @PutMapping("user/setStateUser/{id}")
     ResponseEntity<?> setStateUser(@PathVariable Long id, @RequestParam Boolean state) {
        return userService.setStateUser(id,state);
     }
