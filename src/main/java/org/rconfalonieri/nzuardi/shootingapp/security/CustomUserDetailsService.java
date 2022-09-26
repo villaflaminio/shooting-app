@@ -10,6 +10,7 @@ import org.rconfalonieri.nzuardi.shootingapp.model.dto.ApiResponseDto;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.MailResponse;
 import org.rconfalonieri.nzuardi.shootingapp.repository.PasswordResetTokenRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
+import org.rconfalonieri.nzuardi.shootingapp.security.helper.UserHelper;
 import org.rconfalonieri.nzuardi.shootingapp.security.jwt.TokenProvider;
 import org.rconfalonieri.nzuardi.shootingapp.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private EmailService emailService;
     @Autowired
     private TokenProvider tokenProvider;
+
 
     @Value("${appAuth.resetPasswordExpiration}")
     private String refreshTokenExpiration;
@@ -130,55 +132,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         return emailService.sendEmail(user.getEmail(),"Set new password",model,"src/main/resources/mail-templates/setPassword");
     }
 
-    /**
-     * Validate the password reset token.
-     * @param token The token to validate.
-     * @return invalidToken if the token is invalid, expired if the token is expired
-     */
-    public String validatePasswordResetToken(String token) {
-        Optional<PasswordResetToken> userPasswToken = passwordResetTokenRepository.findByToken(token);
-        if(!userPasswToken.isPresent()) {
-            throw new BadRequestException("Token non valido");
-        }
-        final PasswordResetToken passToken = userPasswToken.get();
 
-        return !isTokenFound(passToken) ? "invalidToken"
-                : isTokenExpired(passToken) ? "expired"
-                : null;
-    }
 
-    /**
-     * Check if the token is found.
-     * @param passToken The token to check.
-     * @return True if the token is found.
-     */
-    private boolean isTokenFound(PasswordResetToken passToken) {
-        return passToken != null;
-    }
 
-    /**
-     * Check if the token is expired.
-     * @param passToken The token to check.
-     * @return True if the token is expired.
-     */
-    private boolean isTokenExpired(PasswordResetToken passToken) {
-        return passToken.getExpiryDate().compareTo(Instant.now()) <= 0;
-    }
 
-    /**
-     * Request token recovery password.
-     * @param token
-     * @param user
-     * @return
-     */
-    public ResponseEntity<?> requestTokenRecoveryPassword(String token , User user) {
-        String result = validatePasswordResetToken(token);
-//        if(result != null) {
-            return ResponseEntity.badRequest().body(new ApiResponseDto(false, result));
-//        } else {
-           // return ResponseEntity.ok(tokenProvider.generateAuthFromUser(user)); :TODO
-//        }
-    }
 
 
 }

@@ -1,5 +1,6 @@
 package org.rconfalonieri.nzuardi.shootingapp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,6 +36,7 @@ public class Prenotazione {
     private boolean confermata;
     @ManyToOne
     @JoinColumn(name="utente_id", nullable=false)
+    @JsonBackReference
     private User utentePren;
 
     @OneToMany(mappedBy = "prenotazione") //todo prenotazione - servizi many to many

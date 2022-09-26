@@ -16,7 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @EntityGraph(attributePaths = "authorities")
     Optional<User> findOneWithAuthoritiesByActualTesserinoId(String tesserinoId);
-
+    @EntityGraph(attributePaths = "authorities")
+    Optional<User> findOneWithAuthoritiesByEmail(String email);
     Boolean existsByActualTesserinoId(String tesserinoId);
     //    @Formula("(select t.id from tesserino t where t.utente_id = ID and t.data_rilascio = (select max(t2.data_rilascio) from tesserino t2 ))")
 

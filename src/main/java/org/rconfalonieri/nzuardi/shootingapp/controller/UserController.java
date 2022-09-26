@@ -1,13 +1,10 @@
 package org.rconfalonieri.nzuardi.shootingapp.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.rconfalonieri.nzuardi.shootingapp.exception.ResourceNotFoundException;
-import org.rconfalonieri.nzuardi.shootingapp.exception.UserException;
+import org.rconfalonieri.nzuardi.shootingapp.model.Prenotazione;
+import org.rconfalonieri.nzuardi.shootingapp.model.Tesserino;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
 //import org.rconfalonieri.nzuardi.shootingapp.model.UserPrincipal;
-import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginDTO;
-import org.rconfalonieri.nzuardi.shootingapp.model.dto.UserDTO;
-import org.rconfalonieri.nzuardi.shootingapp.repository.CurrentUser;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
 import org.rconfalonieri.nzuardi.shootingapp.security.helper.UserHelper;
 import org.rconfalonieri.nzuardi.shootingapp.service.UserService;
@@ -17,10 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
-
-import static org.rconfalonieri.nzuardi.shootingapp.exception.UserException.userExceptionCode.USER_NOT_LOGGED_IN;
 
 @RestController
 @RequestMapping("/api/user/")
@@ -69,10 +64,7 @@ public class UserController {
 //        // Save the user.
 //        return userRepository.save(user);
 //    }
-    @GetMapping("/actualUser") //TODO: controllare se funziona
-    public ResponseEntity<User> getActualUser() {
-        return ResponseEntity.ok(userService.getUserWithAuthorities().get());
-    }
+
     @GetMapping("/user")
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(userService.getAll());
@@ -97,11 +89,20 @@ public class UserController {
         return userService.filter(probe, page, size, sortField, sortDirection);
     }
 
-    //TODO disattivazione utenti
+    @GetMapping("/prenotazioni/getOld")
+    public ResponseEntity<List<Prenotazione>> getOldPrenotazioni() {
+        return userService.getOldPrenotazioni();
+    }
 
-    //todo prendere tutte le prenotazioni passate di un utente
-
-    //todo mostrare i vecchi tesserini di un utente
+   //todo mostrare le prenotazioni del giorno di una banchina
+//    @GetMapping("/prenotazioni/getToday")
+//    public ResponseEntity<List<Prenotazione>> getTodayPrenotazioni() {
+//        return userService.getTodayPrenotazioni();
+//    }
+    @GetMapping("/tesserini/getOld")
+    public ResponseEntity<List<Tesserino>> getOldTesserini() {
+        return userService.getOldTesserini();
+    }
 
     //todo conferma prenotazione, se bisogna pagare dei servizi extra gestire e far pagare in struttura
 

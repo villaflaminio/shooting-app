@@ -1,6 +1,8 @@
 package org.rconfalonieri.nzuardi.shootingapp.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.rconfalonieri.nzuardi.shootingapp.model.Prenotazione;
+import org.rconfalonieri.nzuardi.shootingapp.model.Tesserino;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
 import org.rconfalonieri.nzuardi.shootingapp.security.SecurityUtils;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,7 +26,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Optional<User> getUserWithAuthorities() {
-        return SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByActualTesserinoId);
+        return SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByEmail);
     }
 
     public ResponseEntity<?> getAll() {
@@ -60,4 +63,39 @@ public class UserService {
 
         return ResponseEntity.ok(userRepository.findAll(example, pageable));
     }
+
+    public ResponseEntity<?> setStateUser(Long id, boolean enable) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            user.get().setSospeso(enable);
+            userRepository.save(user.get());
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    public ResponseEntity<List<Prenotazione>> getOldPrenotazioni() {
+        Optional<User> user = SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByEmail);
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get().getPrenotazioni());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+    public ResponseEntity<List<Tesserino>> getOldTesserini() {
+        Optional<User> user = SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByEmail);
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get().getTesserini());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+//    public ResponseEntity<List<Prenotazione>> getTodayPrenotazioni() {
+//
+//
+//    }
 }

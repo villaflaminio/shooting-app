@@ -1,15 +1,19 @@
 package org.rconfalonieri.nzuardi.shootingapp.security.helper;
 import com.google.common.base.Preconditions;
 import net.glxn.qrgen.javase.QRCode;
+import org.rconfalonieri.nzuardi.shootingapp.exception.BadRequestException;
 import org.rconfalonieri.nzuardi.shootingapp.exception.ResourceNotFoundException;
 import org.rconfalonieri.nzuardi.shootingapp.exception.UserException;
 import org.rconfalonieri.nzuardi.shootingapp.model.Authority;
+import org.rconfalonieri.nzuardi.shootingapp.model.PasswordResetToken;
 import org.rconfalonieri.nzuardi.shootingapp.model.Tesserino;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
+import org.rconfalonieri.nzuardi.shootingapp.model.dto.ApiResponseDto;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginDTO;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginUserDTO;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.UserDTO;
 import org.rconfalonieri.nzuardi.shootingapp.repository.AuthorityRepository;
+import org.rconfalonieri.nzuardi.shootingapp.repository.PasswordResetTokenRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.TesserinoRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
 import org.rconfalonieri.nzuardi.shootingapp.security.CustomUserDetailsService;
@@ -26,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.validation.Valid;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.time.Instant;
 import java.util.*;
 
 import static org.rconfalonieri.nzuardi.shootingapp.exception.UserException.userExceptionCode.*;
@@ -42,6 +47,8 @@ public class UserHelper {
     private AuthorityRepository authorityRepository;
 
     @Autowired
+    private PasswordResetTokenRepository passwordResetTokenRepository;
+    @Autowired
     private PasswordEncoder bcryptEncoder;
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
@@ -54,10 +61,12 @@ public class UserHelper {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
     }
 
+
     public ResponseEntity<?> authorizeUser(@Valid @RequestBody LoginUserDTO loginDto) {
 
         User user = userRepository.findByActualTesserinoId(loginDto.idTesserino).orElseThrow(() -> new ResourceNotFoundException("idTesserino", "idTesserino", loginDto.idTesserino));
 
+        if(user.isSospeso())   throw new BadRequestException("Utente sospeso");
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.idTesserino, loginDto.password);
 
@@ -69,7 +78,15 @@ public class UserHelper {
         boolean rememberMe = loginDto.rememberMe != null && loginDto.isRememberMe();
         return tokenProvider.createAuthResponse(authentication,user, rememberMe);
     }
+    public ResponseEntity<?> authorizeUser(User user) {
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
+        //SecurityContextHolder è una classe di supporto, che forniscono l'accesso al contesto di protezione
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return tokenProvider.createAuthResponse(authentication,user, false);
+    }
 
     public ResponseEntity<?> authorize(@Valid @RequestBody LoginDTO loginDto) {
         User user = userRepository.findByEmail(loginDto.email).orElseThrow(() -> new ResourceNotFoundException("email", "email", loginDto.email));
@@ -184,5 +201,53 @@ public class UserHelper {
         return author;
     }
 
+    /**
+     * Check if the token is found.
+     * @param passToken The token to check.
+     * @return True if the token is found.
+     */
+    private boolean isTokenFound(PasswordResetToken passToken) {
+        return passToken != null;
+    }
+
+    /**
+     * Check if the token is expired.
+     * @param passToken The token to check.
+     * @return True if the token is expired.
+     */
+    private boolean isTokenExpired(PasswordResetToken passToken) {
+        return passToken.getExpiryDate().compareTo(Instant.now()) <= 0;
+    }
+    /**
+     * Validate the password reset token.
+     * @param token The token to validate.
+     * @return invalidToken if the token is invalid, expired if the token is expired
+     */
+    public String validatePasswordResetToken(String token) {
+        Optional<PasswordResetToken> userPasswToken = passwordResetTokenRepository.findByToken(token);
+        if(!userPasswToken.isPresent()) {
+            throw new BadRequestException("Token non valido");
+        }
+        final PasswordResetToken passToken = userPasswToken.get();
+
+        return !isTokenFound(passToken) ? "invalidToken"
+                : isTokenExpired(passToken) ? "expired"
+                : null;
+    }
+
+    /**
+     * Request token recovery password.
+     * @param token
+     * @param user
+     * @return
+     */
+    public ResponseEntity<?> requestTokenRecoveryPassword(String token , User user) {
+        String result = validatePasswordResetToken(token);
+        if(result != null) {
+            return ResponseEntity.badRequest().body(new ApiResponseDto(false, result));
+        } else {
+            return authorizeUser(user);
+        }
+    }
 
 }

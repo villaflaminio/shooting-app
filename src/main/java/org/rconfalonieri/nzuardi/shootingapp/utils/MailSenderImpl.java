@@ -15,8 +15,6 @@ import java.util.Properties;
 @Component
 public class MailSenderImpl{
 
-    //todo credenziali gmail
-
     @Value("${mail.username}")
     private String username;
     @Value("${mail.password}")

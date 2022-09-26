@@ -52,7 +52,6 @@ public class User {
     @Size(min = 1, max = 50)
     private String cognome;
 
-    @JsonIgnore
     @Column(name = "sospeso")
     @NotNull
     private boolean sospeso;

@@ -56,18 +56,25 @@ public class AuthController {
         return userHelper.authorize(loginDto);
     }
 
+    @GetMapping("/actualUser")
+    public ResponseEntity<User> getActualUser() {
+        Optional<User> user = userService.getUserWithAuthorities();
+        return user.map(value -> ResponseEntity.ok().body(value)).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/registerFirstUser")
     public ResponseEntity<?> registerUser() {
-         boolean status = userHelper.registerFirstUser();
-            if (status) {
-                return ResponseEntity.ok(new ApiResponseDto(true, "User registered successfully"));
-            } else {
-                return ResponseEntity.ok(new ApiResponseDto(false, "User already registered"));
-            }
+        boolean status = userHelper.registerFirstUser();
+        if (status) {
+            return ResponseEntity.ok(new ApiResponseDto(true, "User registered successfully"));
+        } else {
+            return ResponseEntity.ok(new ApiResponseDto(false, "User already registered"));
+        }
     }
 
     /**
      * Reset the password of the user.
+     *
      * @param userEmail the email of the user to reset the password
      * @return the response
      */
@@ -83,6 +90,7 @@ public class AuthController {
 
     /**
      * Retrieve the authentication of the user with the given token to request a change of password.
+     *
      * @param token the request to reset the password
      * @return the response
      */
@@ -92,7 +100,7 @@ public class AuthController {
         Optional<PasswordResetToken> userPasswToken = passwordResetTokenRepository.findByToken(token);
 
         // Check if the token is present.
-        if(!userPasswToken.isPresent()) {
+        if (!userPasswToken.isPresent()) {
             return ResponseEntity.badRequest().body(new ApiResponseDto(false, "Non è stato trovato nessun token"));
         }
 
@@ -100,7 +108,7 @@ public class AuthController {
         User user = userPasswToken.get().getUser();
 
         // Request the token to change the password.
-        return customUserDetailsService.requestTokenRecoveryPassword(token , user);
+        return userHelper.requestTokenRecoveryPassword(token, user);
     }
 
     //TODO: metodo recupero password

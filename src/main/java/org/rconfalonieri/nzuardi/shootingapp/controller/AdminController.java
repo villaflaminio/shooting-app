@@ -46,7 +46,7 @@ public class AdminController {
      *     "password" : "password"
      * }
      */
-    @PostMapping("/register/user") //TODO funzione disponibile sono per gli admin
+    @PostMapping("/register/user")
     public User registerUser(@Valid @RequestBody UserDTO userDTO) {
         return userHelper.registerUser(userDTO);
     }
@@ -60,7 +60,7 @@ public class AdminController {
      *     "password" : "password"
      * }
      */
-    @PostMapping("/register/admin") //TODO funzione disponibile sono per gli admin
+    @PostMapping("/register/admin")
     public User registerAdmin(@Valid @RequestBody UserDTO userDTO) {
         return userHelper.registerAdmin(userDTO);
     }
@@ -74,7 +74,7 @@ public class AdminController {
      *     "password" : "password"
      * }
      */
-    @PostMapping("/register/istruttore") //TODO funzione disponibile sono per gli admin
+    @PostMapping("/register/istruttore")
     public User registerIstruttore(@Valid @RequestBody UserDTO userDTO) {
         return userHelper.registerIstruttore(userDTO);
     }
@@ -126,11 +126,16 @@ public class AdminController {
         return userService.filter(probe, page, size, sortField, sortDirection);
     }
 
-    //TODO disattivazione utenti
+    /**
+     * @param id Id dell'utente da disattivare / attivare
+     *           da decidere i base al RequestParam state
+     * @return L'utente eliminato
+     */
+    @PostMapping("user/setStateUser/{id}")
+    ResponseEntity<?> setStateUser(@PathVariable Long id, @RequestParam Boolean state) {
+       return userService.setStateUser(id,state);
+    }
 
-    //todo prendere tutte le prenotazioni passate di un utente
-
-    //todo mostrare i vecchi tesserini di un utente
 
     //todo conferma prenotazione, se bisogna pagare dei servizi extra gestire e far pagare in struttura
 
