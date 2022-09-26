@@ -99,8 +99,10 @@ public class ArmaController {
         return armaService.filter(probe, page, size, sortField, sortDirection);
     }
 
-    //todo disabilita arma dato il seriale
-    //todo abilita arma dato il seriale
-
+    @Operation(summary = "setDisponibilita", description = "Disabilita un arma")
+    @PutMapping("/setDisponibilita/{seriale}")
+    public ResponseEntity<Arma> disabilita(@PathVariable("seriale") String seriale, @RequestParam Boolean disponibilita) {
+        return ResponseEntity.ok(armaService.setDisponibilita(seriale,disponibilita));
+    }
 
 }

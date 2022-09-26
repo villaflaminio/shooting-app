@@ -105,4 +105,17 @@ public class UserService {
            return prenotazioneRepository.getByUserForToday(user.get().getId());
         return null;
     }
+
+//    public List<Prenotazione> getTodayPostazioneDiTiroState() {
+//        Optional<User> user = SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByEmail);
+//        if (user.isPresent()) {
+//            List<Prenotazione> prenotaziones = prenotazioneRepository.getByUserForToday(user.get().getId());
+//            for(Prenotazione p : prenotaziones) {
+//              p.get
+//            }
+//        }
+//
+//        return null;
+//    }
+
 }

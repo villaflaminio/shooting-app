@@ -162,4 +162,16 @@ public class ArmaService {
 
         return ResponseEntity.ok(armaRepository.findAll(example, pageable));
     }
+
+    public Arma setDisponibilita(String seriale, boolean disponibilita) {
+        //disabilita l'arma dato il seriale
+        Arma arma = armaRepository.findArmaBySeriale(seriale);
+        if (arma != null){
+            arma.setDisponibile(disponibilita);
+            return armaRepository.save(arma);
+        }else{
+            log.error("Arma non trovata");
+            throw new ResourceNotFoundException("Arma non trovata");
+        }
+    }
 }

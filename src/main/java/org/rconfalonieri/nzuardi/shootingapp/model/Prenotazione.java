@@ -52,4 +52,6 @@ public class Prenotazione {
     @JoinColumn(name = "valutazione_id", referencedColumnName = "id")
     private Valutazione valutazione;
 
+
+    //TODO manca associazione tra prenotazione e banchina
 }
