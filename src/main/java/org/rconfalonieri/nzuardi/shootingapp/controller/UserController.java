@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,11 +95,10 @@ public class UserController {
         return userService.getOldPrenotazioni();
     }
 
-   //todo mostrare le prenotazioni del giorno di una banchina
-//    @GetMapping("/prenotazioni/getToday")
-//    public ResponseEntity<List<Prenotazione>> getTodayPrenotazioni() {
-//        return userService.getTodayPrenotazioni();
-//    }
+    @GetMapping("/prenotazioni/getToday")
+    public List<Prenotazione> getTodayPrenotazioni() throws ParseException {
+        return userService.getTodayPrenotazioni();
+    }
     @GetMapping("/tesserini/getOld")
     public ResponseEntity<List<Tesserino>> getOldTesserini() {
         return userService.getOldTesserini();

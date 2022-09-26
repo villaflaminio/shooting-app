@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BanchinaRepository extends JpaRepository<Banchina, Long> {
+    //get banchina
 }

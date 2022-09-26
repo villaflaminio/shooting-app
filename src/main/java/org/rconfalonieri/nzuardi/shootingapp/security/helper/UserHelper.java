@@ -66,7 +66,8 @@ public class UserHelper {
 
         User user = userRepository.findByActualTesserinoId(loginDto.idTesserino).orElseThrow(() -> new ResourceNotFoundException("idTesserino", "idTesserino", loginDto.idTesserino));
 
-        if(user.isSospeso())   throw new BadRequestException("Utente sospeso");
+        if(user.isSospeso())   return  ResponseEntity.status(401).body(new ApiResponseDto(false, "Utente sospeso"));
+
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.idTesserino, loginDto.password);
 

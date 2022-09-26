@@ -4,13 +4,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.rconfalonieri.nzuardi.shootingapp.model.Prenotazione;
 import org.rconfalonieri.nzuardi.shootingapp.model.Tesserino;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
+import org.rconfalonieri.nzuardi.shootingapp.repository.PrenotazioneRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
 import org.rconfalonieri.nzuardi.shootingapp.security.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +21,8 @@ import java.util.Optional;
 @Transactional
 public class UserService {
 
+    @Autowired
+    private PrenotazioneRepository prenotazioneRepository;
     private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
@@ -94,8 +99,10 @@ public class UserService {
         }
     }
 
-//    public ResponseEntity<List<Prenotazione>> getTodayPrenotazioni() {
-//
-//
-//    }
+    public List<Prenotazione> getTodayPrenotazioni() {
+        Optional<User> user = SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByEmail);
+        if (user.isPresent())
+           return prenotazioneRepository.getByUserForToday(user.get().getId());
+        return null;
+    }
 }
