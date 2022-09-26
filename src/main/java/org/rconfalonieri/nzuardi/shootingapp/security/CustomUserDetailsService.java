@@ -45,7 +45,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private TokenProvider tokenProvider;
 
-    @Value("app.auth.refreshTokenExpiration")
+    @Value("${appAuth.resetPasswordExpiration}")
     private String refreshTokenExpiration;
 
     @Value("${serverProd.uri}")

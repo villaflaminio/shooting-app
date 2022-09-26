@@ -53,6 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     // Configure paths and requests that should be ignored by Spring Security ================================
 
 
+
 //    @Override
 //    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 //        auth.authenticationProvider(authProvider);
@@ -62,7 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         web.ignoring()
                 .antMatchers(HttpMethod.OPTIONS, "/**")
-
+                .antMatchers("/swagger-ui/**", "/bus/v3/api-docs/**")
                 // allow anonymous resource requests
                 .antMatchers(
                         "/*.html",
@@ -108,8 +109,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/api/user/**").hasAuthority("ROLE_USER")
-//                .antMatchers("/**").permitAll()
-
+                .antMatchers("/**").permitAll()
 
                 .anyRequest().authenticated()
 

@@ -24,6 +24,6 @@ public class EmailController {
         Map<String, Object> model = new HashMap<>();
         model.put("name", "Andrea");
         model.put("indirizzo", "www.shootingapp.it/setPassword");
-        return ResponseEntity.ok(emailService.sendEmail("f.villa@elis.org", "Shooting App | Imposta la tua password", model, "setPassword"));
+        return ResponseEntity.ok(emailService.sendEmail("vifla01@gmail.com", "Shooting App | Imposta la tua password", model, "setPassword"));
     }
 }

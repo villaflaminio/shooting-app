@@ -116,13 +116,13 @@ public class UserHelper {
 
     public User registerAdmin(UserDTO userDTO) {
         User user = register(userDTO,getRoles("ADMIN"));
-        //customUserDetailsService.sendMailPostRegistrazione(user); todo decommentare dopo cambio mail
+        customUserDetailsService.sendMailPostRegistrazione(user);
         return user;
     }
 
     public User registerIstruttore(UserDTO userDTO) {
         User user = register(userDTO,getRoles("ISTRUTTORE"));
-       // customUserDetailsService.sendMailPostRegistrazione(user); todo decommentare dopo cambio mail
+        customUserDetailsService.sendMailPostRegistrazione(user);
         return user;
     }
 
@@ -140,7 +140,7 @@ public class UserHelper {
                 .dataScadenza(new Date(dataRilascio.getTime() + (1000L * 60 * 60 * 24 * 365)))
                 .qrCode("data:image/png;base64," + Base64.getEncoder().encodeToString(stream.toByteArray()))
                 .build();
-        //  customUserDetailsService.sendMailPostRegistrazione(utente); //todo riabilitare dopo modifica credenziali gmail
+          customUserDetailsService.sendMailPostRegistrazione(utente);
 
         return tesserinoRepository.save(tesserino);
 
