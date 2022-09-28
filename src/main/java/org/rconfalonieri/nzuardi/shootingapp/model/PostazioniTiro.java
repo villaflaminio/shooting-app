@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 @Table(name = "postazione_tiro")
@@ -33,4 +34,7 @@ public class PostazioniTiro {
     private Integer distanza;
 
     private boolean attiva;
+
+    @OneToMany(mappedBy="postazioniTiro")
+    private List<Prenotazione> prenotazioni;
 }

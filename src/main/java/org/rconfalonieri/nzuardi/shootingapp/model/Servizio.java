@@ -12,6 +12,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Blob;
+import java.util.List;
 
 @Entity
 @Table(name = "servizio")
@@ -45,5 +46,11 @@ public class Servizio {
     @JoinColumn(name = "prenotazione_id")
     private Prenotazione prenotazione;
 
+    @ManyToMany
+    @JoinTable(
+            name = "servizi_prenotazione",
+            joinColumns = @JoinColumn(name = "servizio_id"),
+            inverseJoinColumns = @JoinColumn(name = "prenotazione_id"))
+    List<Prenotazione> prenotazioni;
 
 }

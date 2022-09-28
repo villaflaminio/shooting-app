@@ -35,12 +35,12 @@ public class Prenotazione {
 
     private boolean confermata;
     @ManyToOne
-    @JoinColumn(name="utente_id", nullable=false)
+    @JoinColumn(name = "utente_id", nullable = false)
     @JsonBackReference
     private User utentePren;
 
-    @OneToMany(mappedBy = "prenotazione") //todo prenotazione - servizi many to many
-    private List<Servizio> extra;
+    @ManyToMany(mappedBy = "prenotazioni")
+    private List<Servizio> serviziExtra;
 
     @OneToOne(mappedBy = "prenotazione")
     private Istruttore istruttore;
@@ -52,6 +52,8 @@ public class Prenotazione {
     @JoinColumn(name = "valutazione_id", referencedColumnName = "id")
     private Valutazione valutazione;
 
+    @ManyToOne
+    @JoinColumn(name="postazione_tiro_id", nullable=false)
+    private PostazioniTiro postazioniTiro;
 
-    //TODO manca associazione tra prenotazione e banchina
 }
