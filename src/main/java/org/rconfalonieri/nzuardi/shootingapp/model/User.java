@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
@@ -20,6 +22,7 @@ import java.util.*;
 @Entity
 @Table(name = "USER")
 @Builder
+@SQLDelete(sql = "UPDATE USER SET deleted = true WHERE id=?")
 public class User {
 
     @Id
@@ -83,5 +86,6 @@ public class User {
     public int hashCode() {
         return Objects.hash(id);
     }
+    private boolean deleted = Boolean.FALSE;
 
 }

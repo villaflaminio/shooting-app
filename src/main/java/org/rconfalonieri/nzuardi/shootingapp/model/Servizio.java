@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -20,6 +22,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE servizio SET deleted = true WHERE id=?")
 public class Servizio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,5 +55,7 @@ public class Servizio {
             joinColumns = @JoinColumn(name = "servizio_id"),
             inverseJoinColumns = @JoinColumn(name = "prenotazione_id"))
     List<Prenotazione> prenotazioni;
+
+    private boolean deleted = Boolean.FALSE;
 
 }

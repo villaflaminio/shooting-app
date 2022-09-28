@@ -1,6 +1,7 @@
 package org.rconfalonieri.nzuardi.shootingapp.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.rconfalonieri.nzuardi.shootingapp.model.Servizio;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.ServizioDto;
@@ -74,7 +75,8 @@ public class ServizioController {
      * @param id             Identificativo del servizio da aggiornare.
      * @return servizio aggiornato.
      */
-    @Operation(summary = "update", description = "Aggiorna un servizio")
+    @Operation(summary = "update", description = "Aggiorna un servizio" +
+            "Per aggiungere / diminuire il numero di unita' disponibili o altre modifiche")
     @PutMapping("/{id}")
     public ResponseEntity<Servizio> update(@RequestBody ServizioDto servizioDto, @PathVariable("id") Long id) {
         return ResponseEntity.ok(servizioService.update(servizioDto, id));
@@ -98,10 +100,6 @@ public class ServizioController {
             @RequestParam(required = false, name = "sortDirection") String sortDirection) {
         return servizioService.filter(probe, page, size, sortField, sortDirection);
     }
-
-    //todo diminnuzione del numero di unita' disponibili per un servizio
-
-    //todo aumento del numero di unita' disponibili per un servizio
 
 
 }

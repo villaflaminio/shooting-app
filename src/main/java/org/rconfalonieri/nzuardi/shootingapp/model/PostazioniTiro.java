@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -15,6 +17,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE postazione_tiro SET deleted = true WHERE id=?")
 public class PostazioniTiro {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +28,7 @@ public class PostazioniTiro {
     @NotNull
     private boolean sagoma;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "banchina_id")
     private Banchina banchina;
 
@@ -37,4 +40,7 @@ public class PostazioniTiro {
 
     @OneToMany(mappedBy="postazioniTiro")
     private List<Prenotazione> prenotazioni;
+
+    private boolean deleted = Boolean.FALSE;
+
 }

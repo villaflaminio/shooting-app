@@ -60,7 +60,7 @@ public class PrenotazioneController {
      * @param id Identificativo del prenotazione da eliminare.
      */
     @Operation(summary = "delete", description = "Elimina un prenotazione")
-    @DeleteMapping("/{id}") //todo la delete della prenotazione deve essere solo logica
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         Optional.ofNullable(prenotazioneService.findById(id)).orElseThrow(() -> {
             return new ResourceNotFoundException();

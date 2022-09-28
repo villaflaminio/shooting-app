@@ -1,9 +1,13 @@
 package org.rconfalonieri.nzuardi.shootingapp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Loader;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -16,6 +20,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE banchina SET deleted = true WHERE id=?")
 public class Banchina {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +33,11 @@ public class Banchina {
     private String nome;
 
     @OneToMany(mappedBy = "banchina")
+    @JsonBackReference
     private List<PostazioniTiro> postazioniDiTiro;
 
     private boolean attiva;
+    private boolean deleted = Boolean.FALSE;
+
 
 }

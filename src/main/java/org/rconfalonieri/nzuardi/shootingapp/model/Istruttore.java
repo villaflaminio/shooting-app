@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -15,6 +17,7 @@ import javax.validation.constraints.Size;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE istruttore SET deleted = true WHERE id=?")
 public class Istruttore {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,5 +40,8 @@ public class Istruttore {
 
     @OneToOne(mappedBy = "utenteValutato")
     private Valutazione valutazione;
+
+
+    private boolean deleted = Boolean.FALSE;
 
 }

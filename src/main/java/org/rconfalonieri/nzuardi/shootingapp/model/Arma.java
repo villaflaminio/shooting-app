@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -16,6 +18,7 @@ import javax.validation.constraints.Size;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE arma SET deleted = true WHERE id=?")
 public class Arma {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,4 +45,7 @@ public class Arma {
     @ManyToOne
     @JoinColumn(name = "prenotazione_id")
     private Prenotazione prenotazione;
+
+    private boolean deleted = Boolean.FALSE;
+
 }
