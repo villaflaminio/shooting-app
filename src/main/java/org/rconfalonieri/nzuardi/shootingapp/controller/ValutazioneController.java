@@ -47,7 +47,11 @@ public class ValutazioneController {
         return ResponseEntity.ok(valutazione);
     }
 
-
+    @Operation(summary = "update", description = "salva un valutazione")
+    @PostMapping("/{id}")
+    public ResponseEntity<Valutazione> save(@RequestBody ValutazioneDto valutazioneDto) {
+        return ResponseEntity.ok(valutazioneService.save(valutazioneDto));
+    }
 
 
     /**

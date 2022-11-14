@@ -78,25 +78,6 @@ public class AdminController {
         return userHelper.registerIstruttore(userDTO);
     }
 
-    /**
-     * Update the user password
-     * @return the updated user
-     */
-//    @PostMapping("/changePassword")
-//    public User changePassword(@CurrentUser UserPrincipal userPrincipal , @RequestBody String newPassword ){
-//        // Find the current user by id.
-//        User user = userRepository.findById(userPrincipal.getId())
-//                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
-//
-//        // Update the password.
-//        user.setPassword(newPassword);
-//
-//        // Encode the new password.
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//
-//        // Save the user.
-//        return userRepository.save(user);
-//    }
     @GetMapping("/actualUser")
     public ResponseEntity<User> getActualUser() {
         return ResponseEntity.ok(userService.getUserWithAuthorities().get());
@@ -135,9 +116,5 @@ public class AdminController {
        return userService.setStateUser(id,state);
     }
 
-
-    //todo conferma prenotazione, se bisogna pagare dei servizi extra gestire e far pagare in struttura
-
-    //todo dare un nuovo feedback all'istruttore di una prenotazione
 
 }

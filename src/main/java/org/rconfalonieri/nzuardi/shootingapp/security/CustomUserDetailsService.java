@@ -120,7 +120,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         PasswordResetToken passwordResetToken = new PasswordResetToken();
         passwordResetToken.setToken(token);
         passwordResetToken.setUser(user);
-        passwordResetToken.setExpiryDate(Instant.now().plusSeconds(Long.parseLong(Objects.requireNonNull(env.getProperty("app.auth.refreshTokenExpiration")))));
+        passwordResetToken.setExpiryDate(Instant.now().plusSeconds(5555555l));
 
         // Save the password reset token
         passwordResetTokenRepository.save(passwordResetToken);
@@ -129,7 +129,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Map<String, Object> model = new HashMap<>();
         model.put("name", user.getNome());
         model.put("indirizzo", "http://localhost:8080/" + "user/setPassword?token=" + token );
-        return emailService.sendEmail(user.getEmail(),"Set new password",model,"src/main/resources/mail-templates/setPassword");
+        return emailService.sendEmail(user.getEmail(),"Set new password",model,"setPassword");
     }
 
 

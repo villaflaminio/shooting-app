@@ -2,8 +2,12 @@ package org.rconfalonieri.nzuardi.shootingapp.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.A;
+import org.rconfalonieri.nzuardi.shootingapp.model.Prenotazione;
 import org.rconfalonieri.nzuardi.shootingapp.model.Valutazione;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.ValutazioneDto;
+import org.rconfalonieri.nzuardi.shootingapp.repository.IstruttoreRepository;
+import org.rconfalonieri.nzuardi.shootingapp.repository.PrenotazioneRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.ValutazioneRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -30,6 +34,10 @@ import java.util.Set;
 public class ValutazioneService {
     @Autowired
     ValutazioneRepository valutazioneRepository;
+    @Autowired
+    PrenotazioneRepository prenotazioneRepository;
+    @Autowired
+    IstruttoreRepository istruttoreRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -67,7 +75,8 @@ public class ValutazioneService {
             BeanUtils.copyProperties(valutazioneDto, valutazione);
 
             valutazione.setId(null);
-
+            valutazione.setUtenteValutato(istruttoreRepository.findById(valutazioneDto.getIdistruttore()).orElseThrow(() -> new ResourceNotFoundException("Id istruttore non trovato")));
+            valutazione.setUtenteValutatore(prenotazioneRepository.findById(valutazioneDto.getIdPrenotazione()).orElseThrow(() -> new ResourceNotFoundException("Id prenotazione non trovato")));
             // Salvo l'postazioniTiro
             return valutazioneRepository.save(valutazione);
 

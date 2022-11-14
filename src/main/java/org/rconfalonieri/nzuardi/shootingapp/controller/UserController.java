@@ -32,10 +32,6 @@ public class UserController {
     private UserService userService;
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @Autowired
     private IstruttoreRepository istruttoreRepository;
 
@@ -50,24 +46,6 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-
-    /**
-     * Update the user password
-     * @param userPrincipal the current user
-     * @param newPassword the new password
-     * @return the updated user
-     */
-    @PostMapping("/changePassword")
-    public User changePassword(@CurrentUser UserPrincipal userPrincipal , @RequestBody String newPassword ){
-        // Find the current user by id.
-        User user = userService.getUserWithAuthorities().get();
-        // Update the password.
-        user.setPassword(newPassword);
-        // Encode the new password.
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // Save the user.
-        return userRepository.save(user);
-    }
 
     @GetMapping("/user")
     public ResponseEntity<?> getAll() {
@@ -106,25 +84,5 @@ public class UserController {
     public ResponseEntity<List<Tesserino>> getOldTesserini() {
         return userService.getOldTesserini();
     }
-
-
-    /**
-     * @return valutazione inserito.
-     */
-    @Operation(summary = "save", description = "Crea un nuovo valutazione") //todo gestire logiche di chi puo' creare una nuova valutazione
-    @PostMapping
-    public ResponseEntity<?> save(@RequestBody @Validated ValutazioneDaUtenteDto valutazioneDaUtenteDto) {
-        User user = userService.getUserWithAuthorities().get();
-        Istruttore istruttoreFromDto = istruttoreRepository.findById(valutazioneDaUtenteDto.getIdIstruttore()).orElseThrow(() -> new ResourceNotFoundException("Istruttore", "id", valutazioneDaUtenteDto.getIdIstruttore()));
-//       boolean isPresent =  user.getPrenotazioni().stream()
-//                .filter(istruttore -> istruttore.equals(istruttoreFromDto));
-//
-//        return ResponseEntity.ok(valutazioneService.save(valutazioneDto));
-       return ResponseEntity.ok("ok");
-    }
-
-    //todo conferma prenotazione, se bisogna pagare dei servizi extra gestire e far pagare in struttura
-
-    //todo dare un nuovo feedback all'istruttore di una prenotazione
 
 }

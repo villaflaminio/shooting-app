@@ -3,9 +3,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.rconfalonieri.nzuardi.shootingapp.exception.BadRequestException;
 import org.rconfalonieri.nzuardi.shootingapp.model.PasswordResetToken;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
+import org.rconfalonieri.nzuardi.shootingapp.model.UserPrincipal;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.ApiResponseDto;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginDTO;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginUserDTO;
+import org.rconfalonieri.nzuardi.shootingapp.repository.CurrentUser;
 import org.rconfalonieri.nzuardi.shootingapp.repository.PasswordResetTokenRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
 import org.rconfalonieri.nzuardi.shootingapp.security.CustomUserDetailsService;
@@ -13,6 +15,7 @@ import org.rconfalonieri.nzuardi.shootingapp.security.helper.UserHelper;
 import org.rconfalonieri.nzuardi.shootingapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Optional;
@@ -31,7 +34,8 @@ public class AuthController {
     private UserRepository userRepository;
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
-
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private PasswordResetTokenRepository passwordResetTokenRepository;
 
@@ -100,5 +104,21 @@ public class AuthController {
         // Request the token to change the password.
         return userHelper.requestTokenRecoveryPassword(token, user);
     }
-
+    /**
+     * Update the user password
+     * @param userPrincipal the current user
+     * @param newPassword the new password
+     * @return the updated user
+     */
+    @PostMapping("/changePassword")
+    public User changePassword(@CurrentUser UserPrincipal userPrincipal , @RequestBody String newPassword ){
+        // Find the current user by id.
+        User user = userService.getUserWithAuthorities().get();
+        // Update the password.
+        user.setPassword(newPassword);
+        // Encode the new password.
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // Save the user.
+        return userRepository.save(user);
+    }
 }

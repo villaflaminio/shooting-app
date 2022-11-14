@@ -21,4 +21,7 @@ public class ValutazioneDto implements Serializable {
     @Min(1)
     @Max(5)
     private Integer voto;
+
+    private Long idPrenotazione;
+    private Long idistruttore;
 }

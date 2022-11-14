@@ -2,10 +2,10 @@ package org.rconfalonieri.nzuardi.shootingapp.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.rconfalonieri.nzuardi.shootingapp.model.Prenotazione;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.PrenotazioneDto;
-import org.rconfalonieri.nzuardi.shootingapp.repository.PrenotazioneRepository;
-import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
+import org.rconfalonieri.nzuardi.shootingapp.repository.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -30,6 +30,15 @@ import java.util.Set;
 public class PrenotazioneService {
     @Autowired
     PrenotazioneRepository prenotazioneRepository;
+
+    @Autowired
+    PostazioniTiroRepository postazioniTiroRepository;
+
+    @Autowired
+    ServizioRepository servizioRepository;
+
+    @Autowired
+    ArmaRepository armaRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -67,7 +76,10 @@ public class PrenotazioneService {
             BeanUtils.copyProperties(prenotazioneDto, prenotazione);
 
             prenotazione.setId(null);
-
+            prenotazione.setUtentePren(userRepository.findById(prenotazioneDto.getIdUtente()).orElseThrow(() -> new ResourceNotFoundException("Utente non trovato")));
+            prenotazione.setPostazioniTiro(postazioniTiroRepository.findById(prenotazioneDto.getIdPostazioneTiro()).orElseThrow(() -> new ResourceNotFoundException("Postazione non trovata")));
+            prenotazione.setArmi(armaRepository.findAllById(prenotazioneDto.getIdArmi()));
+            prenotazione.setServiziExtra(servizioRepository.findAllById(prenotazioneDto.getIdServiziExtra()));
             // Salvo l'postazioniTiro
             return prenotazioneRepository.save(prenotazione);
 

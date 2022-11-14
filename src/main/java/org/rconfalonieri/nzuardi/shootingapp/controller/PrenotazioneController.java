@@ -99,10 +99,4 @@ public class PrenotazioneController {
         return prenotazioneService.filter(probe, page, size, sortField, sortDirection);
     }
 
-    //todo gestire abilitazione della prenotazione da parte della segreteria se bisogna pagare dei servizi extra abilitazione manuale
-    //todo dopo il pagamento , altrimenti abilitazione dopo la conferma dell' utente
-
-    //todo la prenotazione deve essere abilitata solo se e' stata confermata e tutti i servizi extra sono stati pagati
-
-    //todo disabilita prenotazione
 }

@@ -22,8 +22,8 @@ public class EmailController {
     @GetMapping("/sendSetPassword")
     public ResponseEntity<?> sendSetPassword() {
         Map<String, Object> model = new HashMap<>();
-        model.put("name", "Andrea");
+        model.put("name", "Raffaele");
         model.put("indirizzo", "www.shootingapp.it/setPassword");
-        return ResponseEntity.ok(emailService.sendEmail("vifla01@gmail.com", "Shooting App | Imposta la tua password", model, "setPassword"));
+        return ResponseEntity.ok(emailService.sendEmail("raffaeleconfalonieri@gmail.com", "Shooting App | Imposta la tua password", model, "setPassword"));
     }
 }
