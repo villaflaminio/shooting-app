@@ -109,19 +109,18 @@ public class UserController {
 
 
     /**
-     * @param valutazioneDto Dto contenente i dati del valutazione da inserire.
      * @return valutazione inserito.
      */
     @Operation(summary = "save", description = "Crea un nuovo valutazione") //todo gestire logiche di chi puo' creare una nuova valutazione
     @PostMapping
-    public ResponseEntity<Valutazione> save(@RequestBody @Validated ValutazioneDaUtenteDto valutazioneDaUtenteDto) {
+    public ResponseEntity<?> save(@RequestBody @Validated ValutazioneDaUtenteDto valutazioneDaUtenteDto) {
         User user = userService.getUserWithAuthorities().get();
         Istruttore istruttoreFromDto = istruttoreRepository.findById(valutazioneDaUtenteDto.getIdIstruttore()).orElseThrow(() -> new ResourceNotFoundException("Istruttore", "id", valutazioneDaUtenteDto.getIdIstruttore()));
 //       boolean isPresent =  user.getPrenotazioni().stream()
 //                .filter(istruttore -> istruttore.equals(istruttoreFromDto));
 //
 //        return ResponseEntity.ok(valutazioneService.save(valutazioneDto));
-        return null;
+       return ResponseEntity.ok("ok");
     }
 
     //todo conferma prenotazione, se bisogna pagare dei servizi extra gestire e far pagare in struttura
