@@ -34,7 +34,7 @@
     <description>ShootingApp</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <jjwt.version>0.11.5</jjwt.version>
         <dockerfile-maven-plugin.version>1.4.12</dockerfile-maven-plugin.version>
 
@@ -219,7 +219,6 @@
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
-            <version>2.3.30</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

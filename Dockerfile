@@ -1,4 +1,4 @@
-FROM openjdk:11-oracle
+FROM openjdk:17-oracle
 ARG JAR_FILE=target/*.jar
 COPY ${JAR_FILE} app.jar
 EXPOSE 8080
