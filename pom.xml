@@ -8,6 +8,25 @@
         <version>2.7.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <build.profile.id>dev</build.profile.id>
+                <profileActive>dev</profileActive>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <build.profile.id>prod</build.profile.id>
+                <profileActive>prod</profileActive>
+            </properties>
+        </profile>
+    </profiles>
     <groupId>org.rconfalonieri.nzuardi</groupId>
     <artifactId>ShootingApp</artifactId>
     <version>1.0.1</version>
@@ -18,7 +37,6 @@
         <java.version>17</java.version>
         <jjwt.version>0.11.5</jjwt.version>
         <dockerfile-maven-plugin.version>1.4.12</dockerfile-maven-plugin.version>
-
 
     </properties>
     <dependencies>

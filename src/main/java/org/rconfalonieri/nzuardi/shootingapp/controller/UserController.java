@@ -117,10 +117,11 @@ public class UserController {
     public ResponseEntity<Valutazione> save(@RequestBody @Validated ValutazioneDaUtenteDto valutazioneDaUtenteDto) {
         User user = userService.getUserWithAuthorities().get();
         Istruttore istruttoreFromDto = istruttoreRepository.findById(valutazioneDaUtenteDto.getIdIstruttore()).orElseThrow(() -> new ResourceNotFoundException("Istruttore", "id", valutazioneDaUtenteDto.getIdIstruttore()));
-       boolean isPresent =  user.getPrenotazioni().stream()
-                .filter(istruttore -> istruttore.equals(istruttoreFromDto));
-
-        return ResponseEntity.ok(valutazioneService.save(valutazioneDto));
+//       boolean isPresent =  user.getPrenotazioni().stream()
+//                .filter(istruttore -> istruttore.equals(istruttoreFromDto));
+//
+//        return ResponseEntity.ok(valutazioneService.save(valutazioneDto));
+        return null;
     }
 
     //todo conferma prenotazione, se bisogna pagare dei servizi extra gestire e far pagare in struttura

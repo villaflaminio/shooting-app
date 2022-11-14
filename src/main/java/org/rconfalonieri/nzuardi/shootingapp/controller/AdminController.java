@@ -43,7 +43,6 @@ public class AdminController {
      *     "nome":"mario ",
      *     "cognome" :"rossi",
      *     "email" : "mariorossi@gmail.com",
-     *     "password" : "password"
      * }
      */
     @PostMapping("/register/user")
