@@ -1,0 +1,31 @@
+name: Deploy
+
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy using ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          KEY: ${{ secrets.SSHKEY }}
+          script: |
+            cd ..
+            cd /home/flaminio/repository_githubAction/
+            git clone git@github.com:villaflaminio/shooting-app.git
+            cd shootingApp
+            git pull
+            docker stop shootingApp
+            docker rm shootingApp
+            docker rmi $(docker images | grep 'shootingApp')
+            mvn clean install -P prod 
+            docker build -t shootingApp .
+            docker run --restart=always -d --name shootingApp -e TZ=Europe/Rome -p 4010:8080 --add-host host.docker.internal:172.17.0.1 shootingApp
