@@ -21,7 +21,7 @@ jobs:
             cd ..
             cd /home/flaminio/repository_githubAction/
             git clone git@github.com:villaflaminio/shooting-app.git
-            cd shootingApp
+            cd shooting-app
             git pull
             docker stop shootingApp
             docker rm shootingApp
