@@ -23,9 +23,9 @@ jobs:
             git clone git@github.com:villaflaminio/shooting-app.git
             cd shooting-app
             git pull
-            docker stop shootingApp
-            docker rm shootingApp
-            docker rmi $(docker images | grep 'shootingApp')
+            docker stop shootingapp
+            docker rm shootingapp
+            docker rmi $(docker images | grep 'shootingapp')
             mvn clean install -P prod 
-            docker build -t shootingApp .
-            docker run --restart=always -d --name shootingApp -e TZ=Europe/Rome -p 4010:8080 --add-host host.docker.internal:172.17.0.1 shootingApp
+            docker build -t shootingapp .
+            docker run --restart=always -d --name shootingapp -e TZ=Europe/Rome -p 4010:8080 --add-host host.docker.internal:172.17.0.1 shootingapp
