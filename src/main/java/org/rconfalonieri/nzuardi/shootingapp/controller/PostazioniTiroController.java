@@ -100,8 +100,6 @@ public class PostazioniTiroController {
         return postazioniTiroService.filter(probe, page, size, sortField, sortDirection);
     }
 
-    //todo api per disattivare la postazione di tiro
-
     @Operation(summary = "setAttiva", description = "Disabilita una postazione di tiro")
     @PutMapping("/setAttiva/{id}")
     public ResponseEntity<PostazioniTiro> disabilita(@PathVariable("id") Long id, @RequestParam Boolean disponibilita) {

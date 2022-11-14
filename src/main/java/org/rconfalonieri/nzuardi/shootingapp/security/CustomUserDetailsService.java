@@ -124,7 +124,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // Save the password reset token
         passwordResetTokenRepository.save(passwordResetToken);
-
+        //Todo template per recupero password
         // Send the email
         Map<String, Object> model = new HashMap<>();
         model.put("name", user.getNome());

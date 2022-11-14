@@ -1,12 +1,11 @@
 package org.rconfalonieri.nzuardi.shootingapp.controller;
-
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.rconfalonieri.nzuardi.shootingapp.exception.BadRequestException;
 import org.rconfalonieri.nzuardi.shootingapp.model.PasswordResetToken;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.ApiResponseDto;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginDTO;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.LoginUserDTO;
-import org.rconfalonieri.nzuardi.shootingapp.model.dto.UserDTO;
 import org.rconfalonieri.nzuardi.shootingapp.repository.PasswordResetTokenRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
 import org.rconfalonieri.nzuardi.shootingapp.security.CustomUserDetailsService;
@@ -14,16 +13,8 @@ import org.rconfalonieri.nzuardi.shootingapp.security.helper.UserHelper;
 import org.rconfalonieri.nzuardi.shootingapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -78,7 +69,7 @@ public class AuthController {
      * @param userEmail the email of the user to reset the password
      * @return the response
      */
-    @PostMapping("/sendMailRecoveryPassword") //TODO: sistemare invio email
+    @PostMapping("/sendMailRecoveryPassword")
     public ResponseEntity<?> sendMailRecoveryPassword(@RequestParam("email") String userEmail) {
         // Find the user with the given email.
         User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new BadRequestException("User not found with email : " + userEmail));
@@ -95,6 +86,7 @@ public class AuthController {
      * @return the response
      */
     @GetMapping("/getAuthenticationFromEmail")
+    @ApiResponse(responseCode = "200", description = "Get The authentication (JWT token) for the user from the token in email")
     public ResponseEntity<?> getAuthenticationFromEmail(@RequestParam("token") String token) {
         // Find the password reset token using the given token.
         Optional<PasswordResetToken> userPasswToken = passwordResetTokenRepository.findByToken(token);
@@ -103,13 +95,10 @@ public class AuthController {
         if (!userPasswToken.isPresent()) {
             return ResponseEntity.badRequest().body(new ApiResponseDto(false, "Non è stato trovato nessun token"));
         }
-
         // Retrieve the user from the token.
         User user = userPasswToken.get().getUser();
-
         // Request the token to change the password.
         return userHelper.requestTokenRecoveryPassword(token, user);
     }
 
-    //TODO: metodo recupero password
 }

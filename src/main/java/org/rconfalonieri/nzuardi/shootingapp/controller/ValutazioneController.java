@@ -48,29 +48,7 @@ public class ValutazioneController {
     }
 
 
-    /**
-     * @param valutazioneDto Dto contenente i dati del valutazione da inserire.
-     * @return valutazione inserito.
-     */
-    @Operation(summary = "save", description = "Crea un nuovo valutazione") //todo gestire logiche di chi puo' creare una nuova valutazione
-    @PostMapping
-    public ResponseEntity<Valutazione> save(@RequestBody @Validated ValutazioneDto valutazioneDto) {
-        return ResponseEntity.ok(valutazioneService.save(valutazioneDto));
-    }
 
-    //todo e' mai necessario elimiare una valutazione? non credo, da valutare
-//    /**
-//     * @param id Identificativo del valutazione da eliminare.
-//     */
-//    @Operation(summary = "delete", description = "Elimina un valutazione")
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-//        Optional.ofNullable(valutazioneService.findById(id)).orElseThrow(() -> {
-//            return new ResourceNotFoundException();
-//        });
-//        valutazioneService.deleteById(id);
-//        return ResponseEntity.ok().build();
-//    }
 
     /**
      * @param valutazioneDto Dto contenente i dati del valutazione da aggiornare.
@@ -91,7 +69,7 @@ public class ValutazioneController {
      * @param sortDirection Direzione di ordinamento.
      * @return Lista di valutazioni filtrate.
      */
-    @Operation(summary = "filter", description = "Filtra gli abbonamenti")
+    @Operation(summary = "filter", description = "Filtra le valutazioni , per filtrare l'istruttore passare l'id nella probe")
     @PostMapping("/filter")
     ResponseEntity<Page<Valutazione>> filter(
             @RequestBody(required = false) Valutazione probe,
@@ -101,8 +79,6 @@ public class ValutazioneController {
             @RequestParam(required = false, name = "sortDirection") String sortDirection) {
         return valutazioneService.filter(probe, page, size, sortField, sortDirection);
     }
-
-    //todo find valutazioni by istruttore
 
 
 }
