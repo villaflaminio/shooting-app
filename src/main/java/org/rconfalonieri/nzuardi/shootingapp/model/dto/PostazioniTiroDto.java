@@ -19,4 +19,6 @@ public class PostazioniTiroDto implements Serializable {
     private Boolean sagoma;
     @NotNull
     private Integer distanza;
+    @NotNull
+    private long idBanchina;;
 }

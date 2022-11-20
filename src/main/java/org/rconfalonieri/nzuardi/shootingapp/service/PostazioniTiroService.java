@@ -2,9 +2,12 @@ package org.rconfalonieri.nzuardi.shootingapp.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.rconfalonieri.nzuardi.shootingapp.controller.BanchinaController;
 import org.rconfalonieri.nzuardi.shootingapp.model.Arma;
+import org.rconfalonieri.nzuardi.shootingapp.model.Banchina;
 import org.rconfalonieri.nzuardi.shootingapp.model.PostazioniTiro;
 import org.rconfalonieri.nzuardi.shootingapp.model.dto.PostazioniTiroDto;
+import org.rconfalonieri.nzuardi.shootingapp.repository.BanchinaRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.PostazioniTiroRepository;
 import org.rconfalonieri.nzuardi.shootingapp.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -31,6 +34,9 @@ import java.util.Set;
 public class PostazioniTiroService {
     @Autowired
     PostazioniTiroRepository postazioniTiroRepository;
+
+    @Autowired
+    BanchinaRepository banchinaRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -68,7 +74,8 @@ public class PostazioniTiroService {
             BeanUtils.copyProperties(postazioniTiroDto, postazioniTiro);
 
             postazioniTiro.setId(null);
-
+            Banchina  banchina = banchinaRepository.findById(postazioniTiroDto.getIdBanchina()).orElseThrow(() -> new ResourceNotFoundException("Banchina"));
+            postazioniTiro.setBanchina(banchina);
             // Salvo l'postazioniTiro
             return postazioniTiroRepository.save(postazioniTiro);
 
