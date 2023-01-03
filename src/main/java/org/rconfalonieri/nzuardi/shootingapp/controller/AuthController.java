@@ -1,5 +1,8 @@
 package org.rconfalonieri.nzuardi.shootingapp.controller;
+import com.google.gson.Gson;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import net.minidev.json.JSONObject;
+import net.minidev.json.JSONValue;
 import org.rconfalonieri.nzuardi.shootingapp.exception.BadRequestException;
 import org.rconfalonieri.nzuardi.shootingapp.model.PasswordResetToken;
 import org.rconfalonieri.nzuardi.shootingapp.model.User;
@@ -115,9 +118,9 @@ public class AuthController {
         // Find the current user by id.
         User user = userService.getUserWithAuthorities().get();
         // Update the password.
-        user.setPassword(newPassword);
+        JSONObject passwordFromResponse = (JSONObject) JSONValue.parse(newPassword);
+        user.setPassword(passwordEncoder.encode(passwordFromResponse.get("newPassword").toString()));
         // Encode the new password.
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
         // Save the user.
         return userRepository.save(user);
     }

@@ -1,5 +1,6 @@
 package org.rconfalonieri.nzuardi.shootingapp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,6 +40,7 @@ public class PostazioniTiro {
     private boolean attiva;
 
     @OneToMany(mappedBy="postazioniTiro")
+    @JsonBackReference
     private List<Prenotazione> prenotazioni;
 
     private boolean deleted = Boolean.FALSE;
